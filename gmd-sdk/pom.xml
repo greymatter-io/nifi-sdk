@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements. See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License. You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.apache.nifi</groupId>
+		<artifactId>nifi-nar-bundles</artifactId>
+		<version>1.10.0</version>
+	</parent>
+	<groupId>com.deciphernow.greymatter</groupId>
+	<artifactId>nifi-sdk</artifactId>
+	<version>0.0.3-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<properties>
+		<bundle.version>0.0.3-SNAPSHOT</bundle.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<scala.version>2.12.10</scala.version>
+		<scala.major.version>2.12</scala.major.version>
+		<commons.io.version>1.3.2</commons.io.version>
+		<slf4j.version>1.7.13</slf4j.version>
+		<scalatest.version>3.0.5</scalatest.version>
+		<scalacheck.version>1.14.0</scalacheck.version>
+		<scalaz-core.version>7.3.0-M31</scalaz-core.version>
+		<refined-scalaz.version>0.9.10</refined-scalaz.version>
+		<argonaut.version>6.2.2</argonaut.version>
+		<nifi.version>1.11.4</nifi.version>
+	</properties>
+	<modules>
+		<module>nifi-data-processors</module>
+		<module>nifi-data-nar</module>
+	</modules>
+	<distributionManagement>
+		<repository>
+			<id>greymatter-nexus-releases</id>
+			<name>Internal Release</name>
+			<url>https://nexus.production.deciphernow.com/repository/maven-public/nifi-sdk/</url>
+		</repository>
+		<snapshotRepository>
+			<id>greymatter-nexus-snapshots</id>
+			<url>https://nexus.production.deciphernow.com/repository/maven-snapshots/nifi-sdk/</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_${scala.major.version}</artifactId>
+			<version>${scalatest.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>4.2.0</version>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<phase>compile</phase>
+					</execution>
+					<execution>
+						<id>test-compile</id>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+						<phase>test-compile</phase>
+					</execution>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<recompileMode>incremental</recompileMode>
+					<scalaVersion>${scala.version}</scalaVersion>
+					<args>
+						<arg>-unchecked</arg>
+						<arg>-feature</arg>
+						<arg>-language:higherKinds</arg>
+						<arg>-Ypartial-unification</arg>
+					</args>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.8</version>
+				<extensions>false</extensions>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
+					<serverId>nexus</serverId>
+					<nexusUrl>https://nexus.production.deciphernow.com</nexusUrl>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.1</version>
+				<executions>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.scalatest</groupId>
+				<artifactId>scalatest-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

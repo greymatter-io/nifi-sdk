@@ -1,0 +1,34 @@
+{
+  "users": [
+    {
+      "label": "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US",
+      "values": {
+        "email": [ "nifinpe@example.com" ],
+        "org": [ "example.com", "OrganizationA" ],
+        "privilege": [ "root" ]
+      }
+    },
+    {
+      "label": "CN=Alice,O=Untrusted Example,L=Baltimore,ST=MD,C=US",
+      "values": {
+        "email": [ "alice@example.com" ],
+        "org": [ "example.com", "OrganizationA" ]
+      }
+    },
+    {
+      "label": "CN=Bob,O=Untrusted Example,L=Baltimore,ST=MD,C=US",
+      "values": {
+        "email": [ "bob@example.com" ],
+        "org": [ "example.com", "OrganizationA" ]
+      }
+    },
+    {
+      "label": "bobbytables",
+      "values": {
+        "email": [ "bobbytables@example.com" ],
+        "org": [ "greymatter.io" ],
+        "privilege": [ "root" ]
+      }
+    }
+  ]
+}

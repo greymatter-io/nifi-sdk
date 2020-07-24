@@ -1,0 +1,1815 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<template encoding-version="1.3">
+    <description></description>
+    <groupId>544d2c99-0173-1000-7e81-1858ef8ffef1</groupId>
+    <name>2020-07-15 FTP to GM Data</name>
+    <snippet>
+        <connections>
+            <id>21b9b986-5ce6-3e60-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            <bends>
+                <x>432.0</x>
+                <y>569.0</y>
+            </bends>
+            <destination>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>2242471c-8d50-32e1-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </destination>
+            <flowFileExpiration>0 sec</flowFileExpiration>
+            <labelIndex>1</labelIndex>
+            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
+            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+            <name></name>
+            <selectedRelationships>success</selectedRelationships>
+            <source>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>ad53b0bc-4c67-3491-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </source>
+            <zIndex>0</zIndex>
+        </connections>
+        <connections>
+            <id>40b72f8d-baf1-3800-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            <bends>
+                <x>1112.0</x>
+                <y>313.0</y>
+            </bends>
+            <bends>
+                <x>0.0</x>
+                <y>313.0</y>
+            </bends>
+            <bends>
+                <x>0.0</x>
+                <y>465.0</y>
+            </bends>
+            <destination>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>ad53b0bc-4c67-3491-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </destination>
+            <flowFileExpiration>0 sec</flowFileExpiration>
+            <labelIndex>1</labelIndex>
+            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
+            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+            <name></name>
+            <selectedRelationships>success</selectedRelationships>
+            <source>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>b4b52c9b-4dc5-390f-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </source>
+            <zIndex>0</zIndex>
+        </connections>
+        <connections>
+            <id>4c742eb4-0ea2-3212-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            <bends>
+                <x>888.0</x>
+                <y>569.0</y>
+            </bends>
+            <destination>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>7aa53ef5-88d3-372b-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </destination>
+            <flowFileExpiration>0 sec</flowFileExpiration>
+            <labelIndex>1</labelIndex>
+            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
+            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+            <name></name>
+            <selectedRelationships>success</selectedRelationships>
+            <source>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>2242471c-8d50-32e1-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </source>
+            <zIndex>0</zIndex>
+        </connections>
+        <connections>
+            <id>56507f21-d9ae-30a5-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            <bends>
+                <x>431.0</x>
+                <y>240.0</y>
+            </bends>
+            <destination>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>854a7190-e30a-3022-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </destination>
+            <flowFileExpiration>0 sec</flowFileExpiration>
+            <labelIndex>0</labelIndex>
+            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
+            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+            <name></name>
+            <selectedRelationships>success</selectedRelationships>
+            <source>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>4795c4ae-fb79-3e39-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </source>
+            <zIndex>0</zIndex>
+        </connections>
+        <connections>
+            <id>7212b540-1294-3fa2-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+            <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+            <bends>
+                <x>879.0</x>
+                <y>240.0</y>
+            </bends>
+            <destination>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>b4b52c9b-4dc5-390f-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </destination>
+            <flowFileExpiration>0 sec</flowFileExpiration>
+            <labelIndex>0</labelIndex>
+            <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
+            <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+            <name></name>
+            <selectedRelationships>success</selectedRelationships>
+            <source>
+                <groupId>38681972-f8ff-3440-0000-000000000000</groupId>
+                <id>854a7190-e30a-3022-0000-000000000000</id>
+                <type>PROCESSOR</type>
+            </source>
+            <zIndex>0</zIndex>
+        </connections>
+        <controllerServices>
+            <id>3d63ad0b-f031-3b32-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <bundle>
+                <artifact>nifi-ssl-context-service-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.11.4</version>
+            </bundle>
+            <comments></comments>
+            <descriptors>
+                <entry>
+                    <key>Keystore Filename</key>
+                    <value>
+                        <name>Keystore Filename</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Keystore Password</key>
+                    <value>
+                        <name>Keystore Password</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>key-password</key>
+                    <value>
+                        <name>key-password</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Keystore Type</key>
+                    <value>
+                        <name>Keystore Type</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Truststore Filename</key>
+                    <value>
+                        <name>Truststore Filename</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Truststore Password</key>
+                    <value>
+                        <name>Truststore Password</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Truststore Type</key>
+                    <value>
+                        <name>Truststore Type</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>SSL Protocol</key>
+                    <value>
+                        <name>SSL Protocol</name>
+                    </value>
+                </entry>
+            </descriptors>
+            <name>Local-SSLContextService</name>
+            <persistsState>false</persistsState>
+            <properties>
+                <entry>
+                    <key>Keystore Filename</key>
+                    <value>/home/nifi/certs/nifinpe.jks</value>
+                </entry>
+                <entry>
+                    <key>Keystore Password</key>
+                </entry>
+                <entry>
+                    <key>key-password</key>
+                </entry>
+                <entry>
+                    <key>Keystore Type</key>
+                    <value>JKS</value>
+                </entry>
+                <entry>
+                    <key>Truststore Filename</key>
+                    <value>/home/nifi/certs/rootCA.jks</value>
+                </entry>
+                <entry>
+                    <key>Truststore Password</key>
+                </entry>
+                <entry>
+                    <key>Truststore Type</key>
+                    <value>JKS</value>
+                </entry>
+                <entry>
+                    <key>SSL Protocol</key>
+                    <value>TLS</value>
+                </entry>
+            </properties>
+            <state>ENABLED</state>
+            <type>org.apache.nifi.ssl.StandardRestrictedSSLContextService</type>
+        </controllerServices>
+        <labels>
+            <id>3099b017-43b8-3532-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>31.0</x>
+                <y>32.0</y>
+            </position>
+            <height>40.0</height>
+            <label>Native processor - creates flow files based upon files on an
+FTP server with optional recursive handling.</label>
+            <style>
+                <entry>
+                    <key>font-size</key>
+                    <value>12px</value>
+                </entry>
+            </style>
+            <width>352.0</width>
+        </labels>
+        <labels>
+            <id>8919a131-88d0-310a-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>935.0</x>
+                <y>32.0</y>
+            </position>
+            <height>40.0</height>
+            <label>Native processor - Assigns mime.type attribute based upon the 
+mime type detected from file content or file name. </label>
+            <style>
+                <entry>
+                    <key>font-size</key>
+                    <value>12px</value>
+                </entry>
+            </style>
+            <width>352.0</width>
+        </labels>
+        <labels>
+            <id>98cd1505-acf2-333b-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>479.0</x>
+                <y>360.0</y>
+            </position>
+            <height>40.0</height>
+            <label>Custom Processor - Transform file to multipart/form-data
+request and assembles JSON representation of metadata.</label>
+            <style>
+                <entry>
+                    <key>background-color</key>
+                    <value>#19cc37</value>
+                </entry>
+                <entry>
+                    <key>font-size</key>
+                    <value>12px</value>
+                </entry>
+            </style>
+            <width>352.0</width>
+        </labels>
+        <labels>
+            <id>aad80126-da1c-31e7-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>479.0</x>
+                <y>32.0</y>
+            </position>
+            <height>40.0</height>
+            <label>Native processor - Retrieves file content from FTP server and 
+puts into the flow file for processing.</label>
+            <style>
+                <entry>
+                    <key>font-size</key>
+                    <value>12px</value>
+                </entry>
+            </style>
+            <width>352.0</width>
+        </labels>
+        <labels>
+            <id>aae0cb6c-e30c-3f2c-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>943.0</x>
+                <y>360.0</y>
+            </position>
+            <height>40.0</height>
+            <label>Native processor - Send the prepared HTTP request to GM Data.
+Successful response is JSON which could be further processed.</label>
+            <style>
+                <entry>
+                    <key>font-size</key>
+                    <value>12px</value>
+                </entry>
+            </style>
+            <width>352.0</width>
+        </labels>
+        <labels>
+            <id>bb1e94f4-1beb-37e9-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>31.0</x>
+                <y>360.0</y>
+            </position>
+            <height>40.0</height>
+            <label>Creates user folder, any optional intermediate prefix folders, 
+and the folders that make up the path to the file. (mkdir -p)</label>
+            <style>
+                <entry>
+                    <key>background-color</key>
+                    <value>#19cc37</value>
+                </entry>
+                <entry>
+                    <key>font-size</key>
+                    <value>12px</value>
+                </entry>
+            </style>
+            <width>352.0</width>
+        </labels>
+        <labels>
+            <id>da1e1bac-22d4-3791-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>175.0</x>
+                <y>0.0</y>
+            </position>
+            <height>32.0</height>
+            <label>START</label>
+            <style>
+                <entry>
+                    <key>background-color</key>
+                    <value>#19cc37</value>
+                </entry>
+                <entry>
+                    <key>font-size</key>
+                    <value>20px</value>
+                </entry>
+            </style>
+            <width>80.0</width>
+        </labels>
+        <processors>
+            <id>2242471c-8d50-32e1-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>479.0</x>
+                <y>400.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-greymatter-data-nar</artifact>
+                <group>com.deciphernow.greymatter</group>
+                <version>0.0.3-SNAPSHOT</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>Object Policy</key>
+                        <value>
+                            <name>Object Policy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Folder Object ID</key>
+                        <value>
+                            <name>Folder Object ID</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Original Object Policy</key>
+                        <value>
+                            <name>Original Object Policy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Security</key>
+                        <value>
+                            <name>Security</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Action</key>
+                        <value>
+                            <name>Action</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Custom</key>
+                        <value>
+                            <name>Custom</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>Object Policy</key>
+                        <value>{
+"requirements": {
+      "f": "if",
+      "a": [
+        {
+          "f": "contains",
+          "a": [
+            {
+              "v": "email"
+            },
+            {
+              "v": "nifinpe@example.com"
+            }
+          ]
+        },
+        {
+          "f": "yield-all"
+        },
+        {
+          "f": "yield",
+          "a": [
+            {
+              "v": "R"
+            },
+            {
+              "v": "X"
+            }
+          ]
+        }
+      ]
+    }
+ }</value>
+                    </entry>
+                    <entry>
+                        <key>Folder Object ID</key>
+                        <value>${gmdata.parentoid}</value>
+                    </entry>
+                    <entry>
+                        <key>Original Object Policy</key>
+                        <value>${gmdata.originalobjectpolicy}</value>
+                    </entry>
+                    <entry>
+                        <key>Security</key>
+                        <value>  {
+    "label": "FILE",
+    "foreground": "#FFFFFF",
+    "background": "#000000"
+  }</value>
+                    </entry>
+                    <entry>
+                        <key>Action</key>
+                        <value>C</value>
+                    </entry>
+                    <entry>
+                        <key>Custom</key>
+                        <value>{"purpose":"nifitest","target":"local instance"}</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>Prepare Request for GM Data</name>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>failure</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+            </relationships>
+            <state>STOPPED</state>
+            <style>
+                <entry>
+                    <key>background-color</key>
+                    <value>#19cc4c</value>
+                </entry>
+            </style>
+            <type>com.deciphernow.greymatter.data.nifi.processors.PrepareWriteRequest</type>
+        </processors>
+        <processors>
+            <id>4795c4ae-fb79-3e39-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>31.0</x>
+                <y>72.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.11.4</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>listing-strategy</key>
+                        <value>
+                            <name>listing-strategy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Hostname</key>
+                        <value>
+                            <name>Hostname</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Port</key>
+                        <value>
+                            <name>Port</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Username</key>
+                        <value>
+                            <name>Username</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Password</key>
+                        <value>
+                            <name>Password</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote Path</key>
+                        <value>
+                            <name>Remote Path</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Distributed Cache Service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.distributed.cache.client.DistributedMapCacheClient</identifiesControllerService>
+                            <name>Distributed Cache Service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Search Recursively</key>
+                        <value>
+                            <name>Search Recursively</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>follow-symlink</key>
+                        <value>
+                            <name>follow-symlink</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>File Filter Regex</key>
+                        <value>
+                            <name>File Filter Regex</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Path Filter Regex</key>
+                        <value>
+                            <name>Path Filter Regex</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Ignore Dotted Files</key>
+                        <value>
+                            <name>Ignore Dotted Files</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote Poll Batch Size</key>
+                        <value>
+                            <name>Remote Poll Batch Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Connection Timeout</key>
+                        <value>
+                            <name>Connection Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Data Timeout</key>
+                        <value>
+                            <name>Data Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Connection Mode</key>
+                        <value>
+                            <name>Connection Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Transfer Mode</key>
+                        <value>
+                            <name>Transfer Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>proxy-configuration-service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.proxy.ProxyConfigurationService</identifiesControllerService>
+                            <name>proxy-configuration-service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Type</key>
+                        <value>
+                            <name>Proxy Type</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Host</key>
+                        <value>
+                            <name>Proxy Host</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Port</key>
+                        <value>
+                            <name>Proxy Port</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Http Proxy Username</key>
+                        <value>
+                            <name>Http Proxy Username</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Http Proxy Password</key>
+                        <value>
+                            <name>Http Proxy Password</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Internal Buffer Size</key>
+                        <value>
+                            <name>Internal Buffer Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>target-system-timestamp-precision</key>
+                        <value>
+                            <name>target-system-timestamp-precision</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>et-state-cache</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.distributed.cache.client.DistributedMapCacheClient</identifiesControllerService>
+                            <name>et-state-cache</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>et-time-window</key>
+                        <value>
+                            <name>et-time-window</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>et-initial-listing-target</key>
+                        <value>
+                            <name>et-initial-listing-target</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>PRIMARY</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>listing-strategy</key>
+                        <value>timestamps</value>
+                    </entry>
+                    <entry>
+                        <key>Hostname</key>
+                        <value>ftp.docker</value>
+                    </entry>
+                    <entry>
+                        <key>Port</key>
+                        <value>21</value>
+                    </entry>
+                    <entry>
+                        <key>Username</key>
+                        <value>username</value>
+                    </entry>
+                    <entry>
+                        <key>Password</key>
+                    </entry>
+                    <entry>
+                        <key>Remote Path</key>
+                        <value>/</value>
+                    </entry>
+                    <entry>
+                        <key>Distributed Cache Service</key>
+                    </entry>
+                    <entry>
+                        <key>Search Recursively</key>
+                        <value>true</value>
+                    </entry>
+                    <entry>
+                        <key>follow-symlink</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>File Filter Regex</key>
+                    </entry>
+                    <entry>
+                        <key>Path Filter Regex</key>
+                    </entry>
+                    <entry>
+                        <key>Ignore Dotted Files</key>
+                        <value>true</value>
+                    </entry>
+                    <entry>
+                        <key>Remote Poll Batch Size</key>
+                        <value>5000</value>
+                    </entry>
+                    <entry>
+                        <key>Connection Timeout</key>
+                        <value>30 sec</value>
+                    </entry>
+                    <entry>
+                        <key>Data Timeout</key>
+                        <value>30 sec</value>
+                    </entry>
+                    <entry>
+                        <key>Connection Mode</key>
+                        <value>Active</value>
+                    </entry>
+                    <entry>
+                        <key>Transfer Mode</key>
+                        <value>Binary</value>
+                    </entry>
+                    <entry>
+                        <key>proxy-configuration-service</key>
+                    </entry>
+                    <entry>
+                        <key>Proxy Type</key>
+                        <value>DIRECT</value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Host</key>
+                    </entry>
+                    <entry>
+                        <key>Proxy Port</key>
+                    </entry>
+                    <entry>
+                        <key>Http Proxy Username</key>
+                    </entry>
+                    <entry>
+                        <key>Http Proxy Password</key>
+                    </entry>
+                    <entry>
+                        <key>Internal Buffer Size</key>
+                        <value>16KB</value>
+                    </entry>
+                    <entry>
+                        <key>target-system-timestamp-precision</key>
+                        <value>auto-detect</value>
+                    </entry>
+                    <entry>
+                        <key>et-state-cache</key>
+                    </entry>
+                    <entry>
+                        <key>et-time-window</key>
+                        <value>1 minute</value>
+                    </entry>
+                    <entry>
+                        <key>et-initial-listing-target</key>
+                        <value>all</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>true</executionNodeRestricted>
+            <name>List Files in FTP Server</name>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+            </relationships>
+            <state>RUNNING</state>
+            <style/>
+            <type>org.apache.nifi.processors.standard.ListFTP</type>
+        </processors>
+        <processors>
+            <id>7aa53ef5-88d3-372b-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>943.0</x>
+                <y>400.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.11.4</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>HTTP Method</key>
+                        <value>
+                            <name>HTTP Method</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote URL</key>
+                        <value>
+                            <name>Remote URL</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>SSL Context Service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.ssl.SSLContextService</identifiesControllerService>
+                            <name>SSL Context Service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Connection Timeout</key>
+                        <value>
+                            <name>Connection Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Read Timeout</key>
+                        <value>
+                            <name>Read Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Include Date Header</key>
+                        <value>
+                            <name>Include Date Header</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Follow Redirects</key>
+                        <value>
+                            <name>Follow Redirects</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Attributes to Send</key>
+                        <value>
+                            <name>Attributes to Send</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Basic Authentication Username</key>
+                        <value>
+                            <name>Basic Authentication Username</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Basic Authentication Password</key>
+                        <value>
+                            <name>Basic Authentication Password</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>proxy-configuration-service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.proxy.ProxyConfigurationService</identifiesControllerService>
+                            <name>proxy-configuration-service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Host</key>
+                        <value>
+                            <name>Proxy Host</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Port</key>
+                        <value>
+                            <name>Proxy Port</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Type</key>
+                        <value>
+                            <name>Proxy Type</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>invokehttp-proxy-user</key>
+                        <value>
+                            <name>invokehttp-proxy-user</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>invokehttp-proxy-password</key>
+                        <value>
+                            <name>invokehttp-proxy-password</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Put Response Body In Attribute</key>
+                        <value>
+                            <name>Put Response Body In Attribute</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Max Length To Put In Attribute</key>
+                        <value>
+                            <name>Max Length To Put In Attribute</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Digest Authentication</key>
+                        <value>
+                            <name>Digest Authentication</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Always Output Response</key>
+                        <value>
+                            <name>Always Output Response</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Add Response Headers to Request</key>
+                        <value>
+                            <name>Add Response Headers to Request</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Content-Type</key>
+                        <value>
+                            <name>Content-Type</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>send-message-body</key>
+                        <value>
+                            <name>send-message-body</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Use Chunked Encoding</key>
+                        <value>
+                            <name>Use Chunked Encoding</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Penalize on "No Retry"</key>
+                        <value>
+                            <name>Penalize on "No Retry"</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>use-etag</key>
+                        <value>
+                            <name>use-etag</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>etag-max-cache-size</key>
+                        <value>
+                            <name>etag-max-cache-size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>ignore-response-content</key>
+                        <value>
+                            <name>ignore-response-content</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>USER_DN</key>
+                        <value>
+                            <name>USER_DN</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>HTTP Method</key>
+                        <value>POST</value>
+                    </entry>
+                    <entry>
+                        <key>Remote URL</key>
+                        <value>http://gm-data:8181/gmdata/write</value>
+                    </entry>
+                    <entry>
+                        <key>SSL Context Service</key>
+                        <value>3d63ad0b-f031-3b32-0000-000000000000</value>
+                    </entry>
+                    <entry>
+                        <key>Connection Timeout</key>
+                        <value>5 secs</value>
+                    </entry>
+                    <entry>
+                        <key>Read Timeout</key>
+                        <value>15 secs</value>
+                    </entry>
+                    <entry>
+                        <key>Include Date Header</key>
+                        <value>True</value>
+                    </entry>
+                    <entry>
+                        <key>Follow Redirects</key>
+                        <value>True</value>
+                    </entry>
+                    <entry>
+                        <key>Attributes to Send</key>
+                    </entry>
+                    <entry>
+                        <key>Basic Authentication Username</key>
+                    </entry>
+                    <entry>
+                        <key>Basic Authentication Password</key>
+                    </entry>
+                    <entry>
+                        <key>proxy-configuration-service</key>
+                    </entry>
+                    <entry>
+                        <key>Proxy Host</key>
+                    </entry>
+                    <entry>
+                        <key>Proxy Port</key>
+                    </entry>
+                    <entry>
+                        <key>Proxy Type</key>
+                        <value>http</value>
+                    </entry>
+                    <entry>
+                        <key>invokehttp-proxy-user</key>
+                    </entry>
+                    <entry>
+                        <key>invokehttp-proxy-password</key>
+                    </entry>
+                    <entry>
+                        <key>Put Response Body In Attribute</key>
+                    </entry>
+                    <entry>
+                        <key>Max Length To Put In Attribute</key>
+                        <value>256</value>
+                    </entry>
+                    <entry>
+                        <key>Digest Authentication</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>Always Output Response</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>Add Response Headers to Request</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>Content-Type</key>
+                        <value>${mime.type}</value>
+                    </entry>
+                    <entry>
+                        <key>send-message-body</key>
+                        <value>true</value>
+                    </entry>
+                    <entry>
+                        <key>Use Chunked Encoding</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>Penalize on "No Retry"</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>use-etag</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>etag-max-cache-size</key>
+                        <value>10MB</value>
+                    </entry>
+                    <entry>
+                        <key>ignore-response-content</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>USER_DN</key>
+                        <value>CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>Send to GM Data</name>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>Failure</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>No Retry</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>Original</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>Response</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>Retry</name>
+            </relationships>
+            <state>STOPPED</state>
+            <style>
+                <entry>
+                    <key>background-color</key>
+                    <value>#ffffff</value>
+                </entry>
+            </style>
+            <type>org.apache.nifi.processors.standard.InvokeHTTP</type>
+        </processors>
+        <processors>
+            <id>854a7190-e30a-3022-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>479.0</x>
+                <y>72.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.11.4</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>Hostname</key>
+                        <value>
+                            <name>Hostname</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Port</key>
+                        <value>
+                            <name>Port</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Username</key>
+                        <value>
+                            <name>Username</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Password</key>
+                        <value>
+                            <name>Password</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote File</key>
+                        <value>
+                            <name>Remote File</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Completion Strategy</key>
+                        <value>
+                            <name>Completion Strategy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Move Destination Directory</key>
+                        <value>
+                            <name>Move Destination Directory</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Create Directory</key>
+                        <value>
+                            <name>Create Directory</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Connection Timeout</key>
+                        <value>
+                            <name>Connection Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Data Timeout</key>
+                        <value>
+                            <name>Data Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Use Compression</key>
+                        <value>
+                            <name>Use Compression</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Connection Mode</key>
+                        <value>
+                            <name>Connection Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Transfer Mode</key>
+                        <value>
+                            <name>Transfer Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>proxy-configuration-service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.proxy.ProxyConfigurationService</identifiesControllerService>
+                            <name>proxy-configuration-service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Type</key>
+                        <value>
+                            <name>Proxy Type</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Host</key>
+                        <value>
+                            <name>Proxy Host</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Port</key>
+                        <value>
+                            <name>Proxy Port</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Http Proxy Username</key>
+                        <value>
+                            <name>Http Proxy Username</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Http Proxy Password</key>
+                        <value>
+                            <name>Http Proxy Password</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Internal Buffer Size</key>
+                        <value>
+                            <name>Internal Buffer Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>fetchfiletransfer-notfound-loglevel</key>
+                        <value>
+                            <name>fetchfiletransfer-notfound-loglevel</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>Hostname</key>
+                        <value>ftp.docker</value>
+                    </entry>
+                    <entry>
+                        <key>Port</key>
+                        <value>21</value>
+                    </entry>
+                    <entry>
+                        <key>Username</key>
+                        <value>username</value>
+                    </entry>
+                    <entry>
+                        <key>Password</key>
+                    </entry>
+                    <entry>
+                        <key>Remote File</key>
+                        <value>${path}/${filename}</value>
+                    </entry>
+                    <entry>
+                        <key>Completion Strategy</key>
+                        <value>None</value>
+                    </entry>
+                    <entry>
+                        <key>Move Destination Directory</key>
+                    </entry>
+                    <entry>
+                        <key>Create Directory</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>Connection Timeout</key>
+                        <value>30 sec</value>
+                    </entry>
+                    <entry>
+                        <key>Data Timeout</key>
+                        <value>30 sec</value>
+                    </entry>
+                    <entry>
+                        <key>Use Compression</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
+                        <key>Connection Mode</key>
+                        <value>Active</value>
+                    </entry>
+                    <entry>
+                        <key>Transfer Mode</key>
+                        <value>Binary</value>
+                    </entry>
+                    <entry>
+                        <key>proxy-configuration-service</key>
+                    </entry>
+                    <entry>
+                        <key>Proxy Type</key>
+                        <value>DIRECT</value>
+                    </entry>
+                    <entry>
+                        <key>Proxy Host</key>
+                    </entry>
+                    <entry>
+                        <key>Proxy Port</key>
+                    </entry>
+                    <entry>
+                        <key>Http Proxy Username</key>
+                    </entry>
+                    <entry>
+                        <key>Http Proxy Password</key>
+                    </entry>
+                    <entry>
+                        <key>Internal Buffer Size</key>
+                        <value>16KB</value>
+                    </entry>
+                    <entry>
+                        <key>fetchfiletransfer-notfound-loglevel</key>
+                        <value>ERROR</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>Set FlowFile File Content</name>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>comms.failure</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>not.found</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>permission.denied</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+            </relationships>
+            <state>RUNNING</state>
+            <style/>
+            <type>org.apache.nifi.processors.standard.FetchFTP</type>
+        </processors>
+        <processors>
+            <id>ad53b0bc-4c67-3491-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>31.0</x>
+                <y>400.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-greymatter-data-nar</artifact>
+                <group>com.deciphernow.greymatter</group>
+                <version>0.0.3-SNAPSHOT</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>Object Policy</key>
+                        <value>
+                            <name>Object Policy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Original Object Policy</key>
+                        <value>
+                            <name>Original Object Policy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Security</key>
+                        <value>
+                            <name>Security</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote Url</key>
+                        <value>
+                            <name>Remote Url</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>SSL Context Service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.ssl.SSLContextService</identifiesControllerService>
+                            <name>SSL Context Service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Userfield Folder Object Policy</key>
+                        <value>
+                            <name>Userfield Folder Object Policy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Userfield Folder Original Object Policy</key>
+                        <value>
+                            <name>Userfield Folder Original Object Policy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Userfield Folder Security</key>
+                        <value>
+                            <name>Userfield Folder Security</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Intermediate Folder Prefix</key>
+                        <value>
+                            <name>Intermediate Folder Prefix</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Intermediate Folder Object Policy</key>
+                        <value>
+                            <name>Intermediate Folder Object Policy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Intermediate Folder Original Object Policy</key>
+                        <value>
+                            <name>Intermediate Folder Original Object Policy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Intermediate Folder Security</key>
+                        <value>
+                            <name>Intermediate Folder Security</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Attributes to Send</key>
+                        <value>
+                            <name>Attributes to Send</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>USER_DN</key>
+                        <value>
+                            <name>USER_DN</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>Object Policy</key>
+                        <value>{
+"requirements": {
+      "f": "if",
+      "a": [
+        {
+          "f": "contains",
+          "a": [
+            {
+              "v": "email"
+            },
+            {
+              "v": "nifinpe@example.com"
+            }
+          ]
+        },
+        {
+          "f": "yield-all"
+        },
+        {
+          "f": "yield",
+          "a": [
+            {
+              "v": "R"
+            },
+            {
+              "v": "X"
+            },
+            {
+              "v": "C"
+            }
+          ]
+        }
+      ]
+    }
+ }</value>
+                    </entry>
+                    <entry>
+                        <key>Original Object Policy</key>
+                        <value>${gmdata.originalobjectpolicy}</value>
+                    </entry>
+                    <entry>
+                        <key>Security</key>
+                        <value>  {
+    "label": "FILE-FOLDER",
+    "foreground": "#FFFFFF",
+    "background": "#2B65EC"
+  }</value>
+                    </entry>
+                    <entry>
+                        <key>Remote Url</key>
+                        <value>http://gm-data:8181/gmdata</value>
+                    </entry>
+                    <entry>
+                        <key>SSL Context Service</key>
+                        <value>3d63ad0b-f031-3b32-0000-000000000000</value>
+                    </entry>
+                    <entry>
+                        <key>Userfield Folder Object Policy</key>
+                        <value>{
+"requirements": {
+      "f": "if",
+      "a": [
+        {
+          "f": "contains",
+          "a": [
+            {
+              "v": "email"
+            },
+            {
+              "v": "nifinpe@example.com"
+            }
+          ]
+        },
+        {
+          "f": "yield",
+          "a": [
+            {
+              "v": "C"
+            },
+            {
+              "v": "R"
+            },
+            {
+              "v": "U"
+            },
+            {
+              "v": "D"
+            },
+            {
+              "v": "X"
+            },
+            {
+              "v": "P"
+            }
+          ]
+        },
+        {
+          "f": "yield",
+          "a": [
+            {
+              "v": "R"
+            },
+            {
+              "v": "X"
+            }
+          ]
+        }
+      ]
+    }
+ }</value>
+                    </entry>
+                    <entry>
+                        <key>Userfield Folder Original Object Policy</key>
+                    </entry>
+                    <entry>
+                        <key>Userfield Folder Security</key>
+                        <value>  {
+    "label": "USERFIELD",
+    "foreground": "#FFFFFF",
+    "background": "#347C17"
+  }</value>
+                    </entry>
+                    <entry>
+                        <key>Intermediate Folder Prefix</key>
+                        <value>demo/from-ftp/2020-07-15</value>
+                    </entry>
+                    <entry>
+                        <key>Intermediate Folder Object Policy</key>
+                        <value>{
+"requirements": {
+      "f": "if",
+      "a": [
+        {
+          "f": "contains",
+          "a": [
+            {
+              "v": "email"
+            },
+            {
+              "v": "nifinpe@example.com"
+            }
+          ]
+        },
+        {
+          "f": "yield-all"
+        },
+        {
+          "f": "yield",
+          "a": [
+            {
+              "v": "R"
+            },
+            {
+              "v": "X"
+            },
+            {
+              "v": "C"
+            },
+            {
+              "v": "U"
+            }
+          ]
+        }
+      ]
+    }
+ }</value>
+                    </entry>
+                    <entry>
+                        <key>Intermediate Folder Original Object Policy</key>
+                    </entry>
+                    <entry>
+                        <key>Intermediate Folder Security</key>
+                        <value>  {
+    "label": "INTERMEDIATE",
+    "foreground": "#FFFFFF",
+    "background": "#B93B8F"
+  }</value>
+                    </entry>
+                    <entry>
+                        <key>Attributes to Send</key>
+                    </entry>
+                    <entry>
+                        <key>USER_DN</key>
+                        <value>CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>Build Folder Hierarchy</name>
+            <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>failure</name>
+            </relationships>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+            </relationships>
+            <state>RUNNING</state>
+            <style>
+                <entry>
+                    <key>background-color</key>
+                    <value>#19cc4c</value>
+                </entry>
+            </style>
+            <type>com.deciphernow.greymatter.data.nifi.processors.GetOidForPath</type>
+        </processors>
+        <processors>
+            <id>b4b52c9b-4dc5-390f-0000-000000000000</id>
+            <parentGroupId>38681972-f8ff-3440-0000-000000000000</parentGroupId>
+            <position>
+                <x>935.0</x>
+                <y>72.0</y>
+            </position>
+            <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.11.4</version>
+            </bundle>
+            <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                    <entry>
+                        <key>use-filename-in-detection</key>
+                        <value>
+                            <name>use-filename-in-detection</name>
+                        </value>
+                    </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                    <entry>
+                        <key>use-filename-in-detection</key>
+                        <value>true</value>
+                    </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+            </config>
+            <executionNodeRestricted>false</executionNodeRestricted>
+            <name>Identify Mime Type</name>
+            <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+            </relationships>
+            <state>RUNNING</state>
+            <style>
+                <entry>
+                    <key>background-color</key>
+                    <value>#ffffff</value>
+                </entry>
+            </style>
+            <type>org.apache.nifi.processors.standard.IdentifyMimeType</type>
+        </processors>
+    </snippet>
+    <timestamp>07/15/2020 21:49:19 UTC</timestamp>
+</template>

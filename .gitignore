@@ -1,0 +1,42 @@
+# General exclusions
+*.log
+
+# General exclusions for Java
+target/
+*.class
+
+# Intellij
+.idea
+.idea/
+*.iml
+*.iws
+*~
+
+# Visual Studio Code
+.vscode/
+
+# Maven preferences
+org.eclipse.m2e.core.prefs
+.project
+
+# Metals
+.metals/
+
+.settings
+.classpath
+
+# Only let the certs we want in, will now require a force add
+.certs/
+
+#GMData
+data/
+
+# Maven release
+release.properties
+*.releaseBackup
+*.xml.tag
+
+# Extra
+*junk*
+*notes*
+*.tar.gz

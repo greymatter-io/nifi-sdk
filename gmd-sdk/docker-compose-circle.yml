@@ -1,0 +1,76 @@
+version: "2"
+services:
+
+  nifi:
+    image: apache/nifi:1.11.4
+    environment:
+      - NIFI_VERSION=1.11.4
+    ports:
+      - 9443:8080
+    networks:
+      - nifi
+    volumes:
+      - ./nifi-data-nar/target/nifi-greymatter-data-nar-0.0.3-SNAPSHOT.nar:/opt/nifi/nifi-current/lib/nifi-greymatter-data-nar-0.0.3-SNAPSHOT.nar
+      - ../nifi-templates/:/opt/nifi/nifi-current/conf/templates/
+      - ./nifiTestSetup/testFiles:/opt/nifi/nifi-current/testFiles
+      - ./certs:/home/nifi/certs
+
+  gmdata-standalone:
+    networks:
+      nifi:
+        aliases:
+          - gmdata-standalone
+    image: deciphernow/gm-data:1.1.1
+    ports:
+      - "8181:8181"
+    depends_on:
+      - mongo-ephemeral
+      - jwt-standalone
+    environment:
+      - CLIENT_JWT_ENDPOINT_ADDRESS=jwt-standalone
+      - CLIENT_JWT_ENDPOINT_PORT=8080
+      - CLIENT_JWT_ENDPOINT_PREFIX=/
+      - CLIENT_JWT_ENDPOINT_
+      - CLIENT_PREFIX=
+      - CLIENT_USE_TLS=false
+      - CLIENT_HOST=localhost
+      - CLIENT_PORT=8181
+      - GMDATA_USE_TLS=true
+      - GMDATA_NAMESPACE=world
+      - GMDATA_NAMESPACE_USERFIELD=email
+      - JWT_API_KEY=Zm9vCg==
+      - JWT_PUB=LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlHYk1CQUdCeXFHU000OUFnRUdCU3VCQkFBakE0R0dBQVFCSUVrNGpHL1FEMkZwNURxcmMrTzFPVy9CaG1BLwpKcmgyRFRaRWpybEZONnJYbTA0Vms0bUluNENZSmJ0VDdIQjc2cVJIeE9DNTFORVk0eFZHb1RUUVZta0Fnc3ljCllVdEdqZ3pKQUdTZExsSXZKSmtabWkrSjZBbWVtNng5UFZkajcxc2hHSnhNdjM4SDFTa2RRS29EZmllS3dZbFIKNENPUWFxdXdJVEpPYWd2R1VUQT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==
+      - TEST_JWT_PRIV=LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1JSGNBZ0VCQkVJQUludTVqbEdaU2Z6M2dMOWczOVNoeE5UaWtUQ0lvUWtFVVUyckdnV1ZJTm9TN3RlM2d1Uk8KK2VKb3FDZTd0Z3pKL1RZcGVxU055elE2UGVTS2JmZC91K2FnQndZRks0RUVBQ09oZ1lrRGdZWUFCQUVnU1RpTQpiOUFQWVdua09xdHo0N1U1YjhHR1lEOG11SFlOTmtTT3VVVTNxdGViVGhXVGlZaWZnSmdsdTFQc2NIdnFwRWZFCjRMblUwUmpqRlVhaE5OQldhUUNDekp4aFMwYU9ETWtBWkowdVVpOGttUm1hTDRub0NaNmJySDA5VjJQdld5RVkKbkV5L2Z3ZlZLUjFBcWdOK0o0ckJpVkhnSTVCcXE3QWhNazVxQzhaUk1BPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+      - MASTERKEY=fark
+      - FILE_BUCKET=decipherers
+      - FILE_PARTITION=gmdatax
+      - USES3=false
+      - MONGOHOST=mongo-ephemeral
+      - MONGODB=chili
+    volumes:
+      - ./privacy.html:/static/privacy.html
+      - ./certs/gmdata:/certs
+
+  mongo-ephemeral:
+    networks:
+      - nifi
+    image: mongo
+
+  jwt-standalone:
+    networks:
+      - nifi
+    image: deciphernow/gm-jwt-security:1.1.1
+    environment:
+      - JWT_PUB=LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlHYk1CQUdCeXFHU000OUFnRUdCU3VCQkFBakE0R0dBQVFCSUVrNGpHL1FEMkZwNURxcmMrTzFPVy9CaG1BLwpKcmgyRFRaRWpybEZONnJYbTA0Vms0bUluNENZSmJ0VDdIQjc2cVJIeE9DNTFORVk0eFZHb1RUUVZta0Fnc3ljCllVdEdqZ3pKQUdTZExsSXZKSmtabWkrSjZBbWVtNng5UFZkajcxc2hHSnhNdjM4SDFTa2RRS29EZmllS3dZbFIKNENPUWFxdXdJVEpPYWd2R1VUQT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==
+      - PRIVATE_KEY=LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1JSGNBZ0VCQkVJQUludTVqbEdaU2Z6M2dMOWczOVNoeE5UaWtUQ0lvUWtFVVUyckdnV1ZJTm9TN3RlM2d1Uk8KK2VKb3FDZTd0Z3pKL1RZcGVxU055elE2UGVTS2JmZC91K2FnQndZRks0RUVBQ09oZ1lrRGdZWUFCQUVnU1RpTQpiOUFQWVdua09xdHo0N1U1YjhHR1lEOG11SFlOTmtTT3VVVTNxdGViVGhXVGlZaWZnSmdsdTFQc2NIdnFwRWZFCjRMblUwUmpqRlVhaE5OQldhUUNDekp4aFMwYU9ETWtBWkowdVVpOGttUm1hTDRub0NaNmJySDA5VjJQdld5RVkKbkV5L2Z3ZlZLUjFBcWdOK0o0ckJpVkhnSTVCcXE3QWhNazVxQzhaUk1BPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+      - TOKEN_EXP_TIME=30000
+      - REDIS_HOST=
+      - ENABLE_TLS=false
+      - ZEROLOG_LEVEL=debug
+      - JWT_API_KEY=Zm9vCg==
+    ports:
+      - "8480:8080"
+    volumes:
+      - ./nifiTestSetup/users.json:/gm-jwt-security/etc/users.json
+networks:
+  nifi: {}

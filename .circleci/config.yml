@@ -1,0 +1,170 @@
+
+version: 2
+jobs:
+  # Make sure it compiles before even testing
+  compile:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    working_directory: ~/nifi-sdk
+
+    # Actually do some work
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "~/nifi-sdk/gmd-sdk/pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
+
+      # Don't need to run the tests again since they'll be run in tester
+      - run: |
+          cd gmd-sdk && mvn clean compile
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "~/nifi-sdk/gmd-sdk/pom.xml" }}
+
+  # Just do unit testing
+  test:
+    machine:
+      image: ubuntu-1604:201903-01
+
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
+
+    working_directory: ~/nifi-sdk
+
+    # Do some work
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "~/nifi-sdk/gmd-sdk/pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
+
+      - run:
+          name: Install maven 3.3.9
+          command: sudo chmod -R 777 /usr/local && cd /usr/local && rm -rf apache-maven &&  wget http://www-eu.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz && tar -xvzf apache-maven-3.3.9-bin.tar.gz && mv apache-maven-3.3.9 apache-maven
+
+      - run:
+          name: Login to docker
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+      - run:
+          name: pull required images
+          command: pwd && docker-compose -f gmd-sdk/docker-compose-circle.yml pull
+
+      - run:
+          name: bring up docker images for testing
+          command: cd gmd-sdk && docker-compose -f docker-compose-circle.yml up -d
+
+      - run:
+          name: run tests
+          command: sudo chmod -R 777 gmd-sdk && cd gmd-sdk && docker ps && mvn clean test -Dtest='*,!GetPoliciesTest' -DfailIfNoTests=false
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "~/nifi-sdk/gmd-sdk/pom.xml" }}
+
+
+  # Build and deploy the snapshot to nexus
+  deploy-snapshot:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    working_directory: ~/nifi-sdk
+
+    # Actually do some work
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "~/nifi-sdk/gmd-sdk/pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
+
+      # Don't need to run the tests again since they'll be run in tester
+      - run: |
+          cd gmd-sdk && mvn clean install deploy -s /home/circleci/nifi-sdk/settings.xml -DskipTests
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "~/nifi-sdk/gmd-sdk/pom.xml" }}
+
+  deploy-release:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    working_directory: ~/nifi-sdk
+
+    # Actually do some work
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "~/nifi-sdk/gmd-sdk/pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
+
+      # Don't need to run the tests again since they'll be run in tester
+      - run: |
+          cd gmd-sdk && mvn clean install deploy -s /home/circleci/nifi-sdk/settings.xml -DskipTests
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "~/nifi-sdk/gmd-sdk/pom.xml" }}
+
+
+workflows:
+  version: 2
+  test-and-build:
+    jobs:
+      - compile
+      - test:
+          requires:
+            - compile
+      - deploy-snapshot:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      - deploy-release:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
