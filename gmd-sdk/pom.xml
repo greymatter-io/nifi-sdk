@@ -20,11 +20,11 @@
 	<parent>
 		<groupId>org.apache.nifi</groupId>
 		<artifactId>nifi-nar-bundles</artifactId>
-		<version>1.10.0</version>
+		<version>1.11.4</version>
 	</parent>
 	<groupId>com.deciphernow.greymatter</groupId>
 	<artifactId>nifi-sdk</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
 		<bundle.version>1.0.0</bundle.version>
