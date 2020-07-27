@@ -24,10 +24,10 @@
 	</parent>
 	<groupId>com.deciphernow.greymatter</groupId>
 	<artifactId>nifi-sdk</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<properties>
-		<bundle.version>0.0.3-SNAPSHOT</bundle.version>
+		<bundle.version>1.0.0</bundle.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>

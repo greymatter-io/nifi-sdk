@@ -976,7 +976,7 @@ request and assembles JSON representation of metadata.</label>
             <bundle>
                 <artifact>nifi-greymatter-data-nar</artifact>
                 <group>com.deciphernow.greymatter</group>
-                <version>0.0.3-SNAPSHOT</version>
+                <version>1.0.0</version>
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
@@ -1118,7 +1118,7 @@ request and assembles JSON representation of metadata.</label>
             <bundle>
                 <artifact>nifi-greymatter-data-nar</artifact>
                 <group>com.deciphernow.greymatter</group>
-                <version>0.0.3-SNAPSHOT</version>
+                <version>1.0.0</version>
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
@@ -2251,7 +2251,7 @@ request and assembles JSON representation of metadata.</label>
             <bundle>
                 <artifact>nifi-greymatter-data-nar</artifact>
                 <group>com.deciphernow.greymatter</group>
-                <version>0.0.3-SNAPSHOT</version>
+                <version>1.0.0</version>
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
@@ -2393,7 +2393,7 @@ request and assembles JSON representation of metadata.</label>
             <bundle>
                 <artifact>nifi-greymatter-data-nar</artifact>
                 <group>com.deciphernow.greymatter</group>
-                <version>0.0.3-SNAPSHOT</version>
+                <version>1.0.0</version>
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>

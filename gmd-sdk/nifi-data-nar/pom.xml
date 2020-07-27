@@ -19,7 +19,7 @@
     <parent>
         <groupId>com.deciphernow.greymatter</groupId>
         <artifactId>nifi-sdk</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>nifi-greymatter-data-nar</artifactId>
