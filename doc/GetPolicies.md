@@ -15,7 +15,7 @@ In the list below, the names of required properties appear in bold. Any other pr
 | Name | Default Value | Allowable Values | Description |
 | --- | --- | --- | --- |
 | <b>Remote base URL</b> | | | The RESTful endpoint for the Data Policy service. |
-| SSL Context Service | | | The [SSL Context Service](https://nifi.apache.org/docs/nifi-docs/components/org.apache.nifi/nifi-ssl-context-service-nar/1.10.0/org.apache.nifi.ssl.StandardSSLContextService/) used to provide client certificate information for TLS/SSL (https) connections. It is also used to connect to HTTPS Proxy. |
+| SSL Context Service | | | The [SSL Context Service](https://nifi.apache.org/docs/nifi-docs/components/org.apache.nifi/nifi-ssl-context-service-nar/1.11.4/org.apache.nifi.ssl.StandardSSLContextService/) used to provide client certificate information for TLS/SSL (https) connections. It is also used to connect to HTTPS Proxy. |
 | Connection Timeout | 5 secs | | Max wait time for connection to remote service. |
 | Read Timeout | 15 secs | | Max wait time for response from remote service. |
 | Attributes to Send | | | Regular expression that defines which attributes to send as HTTP headers in the request. If not defined, no attributes are sent as headers. Also any dynamic properties set will be sent as headers. The dynamic property key will be the header key and the dynamic property value will be interpreted as expression language will be the header value. |
