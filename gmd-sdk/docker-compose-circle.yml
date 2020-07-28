@@ -20,7 +20,7 @@ services:
       nifi:
         aliases:
           - gmdata-standalone
-    image: deciphernow/gm-data:1.1.1
+    image: docker.greymatter.io/development/gm-data:1.1.1
     ports:
       - "8181:8181"
     depends_on:
@@ -59,7 +59,7 @@ services:
   jwt-standalone:
     networks:
       - nifi
-    image: deciphernow/gm-jwt-security:1.1.1
+    image: docker.greymatter.io/development/:1.1.1
     environment:
       - JWT_PUB=LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlHYk1CQUdCeXFHU000OUFnRUdCU3VCQkFBakE0R0dBQVFCSUVrNGpHL1FEMkZwNURxcmMrTzFPVy9CaG1BLwpKcmgyRFRaRWpybEZONnJYbTA0Vms0bUluNENZSmJ0VDdIQjc2cVJIeE9DNTFORVk0eFZHb1RUUVZta0Fnc3ljCllVdEdqZ3pKQUdTZExsSXZKSmtabWkrSjZBbWVtNng5UFZkajcxc2hHSnhNdjM4SDFTa2RRS29EZmllS3dZbFIKNENPUWFxdXdJVEpPYWd2R1VUQT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==
       - PRIVATE_KEY=LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1JSGNBZ0VCQkVJQUludTVqbEdaU2Z6M2dMOWczOVNoeE5UaWtUQ0lvUWtFVVUyckdnV1ZJTm9TN3RlM2d1Uk8KK2VKb3FDZTd0Z3pKL1RZcGVxU055elE2UGVTS2JmZC91K2FnQndZRks0RUVBQ09oZ1lrRGdZWUFCQUVnU1RpTQpiOUFQWVdua09xdHo0N1U1YjhHR1lEOG11SFlOTmtTT3VVVTNxdGViVGhXVGlZaWZnSmdsdTFQc2NIdnFwRWZFCjRMblUwUmpqRlVhaE5OQldhUUNDekp4aFMwYU9ETWtBWkowdVVpOGttUm1hTDRub0NaNmJySDA5VjJQdld5RVkKbkV5L2Z3ZlZLUjFBcWdOK0o0ckJpVkhnSTVCcXE3QWhNazVxQzhaUk1BPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
