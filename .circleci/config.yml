@@ -62,7 +62,7 @@ jobs:
 
       - run:
           name: Login to docker
-          command: docker login -u $NEXUS_USERNAME -p $NEXUS_PASSWORD https://docker.greymatter.io/development/
+          command: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD https://docker.greymatter.io/development/
 
       - run:
           name: pull required images
@@ -107,7 +107,7 @@ jobs:
 
       # Don't need to run the tests again since they'll be run in tester
       - run: |
-          cd gmd-sdk && mvn clean install deploy -DskipTests
+          cd gmd-sdk && mvn clean install deploy -s /home/circleci/nifi-sdk/settings.xml -DskipTests
 
       - save_cache:
           paths:
@@ -138,7 +138,7 @@ jobs:
 
       # Don't need to run the tests again since they'll be run in tester
       - run: |
-          cd gmd-sdk && mvn clean install deploy -DskipTests
+          cd gmd-sdk && mvn clean install deploy -s /home/circleci/nifi-sdk/settings.xml -DskipTests
 
       - save_cache:
           paths:

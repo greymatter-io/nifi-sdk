@@ -1,12 +1,12 @@
 <settings>
     <servers>
         <server>
-            <id>greymatter-nexus-releases</id>
+            <id>oss-release</id>
             <username>${env.NEXUS_USERNAME}</username>
             <password>${env.NEXUS_PASSWORD}</password>
         </server>
         <server>
-            <id>greymatter-nexus-snapshots</id>
+            <id>oss-snapshot</id>
             <username>${env.NEXUS_USERNAME}</username>
             <password>${env.NEXUS_PASSWORD}</password>
         </server>

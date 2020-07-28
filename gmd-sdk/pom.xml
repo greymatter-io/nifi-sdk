@@ -23,7 +23,7 @@
 		<version>1.11.4</version>
 	</parent>
 	<groupId>io.greymatter</groupId>
-	<artifactId>nifi-sdk</artifactId>
+	<artifactId>nifi-data</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
