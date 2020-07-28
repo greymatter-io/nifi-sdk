@@ -23,7 +23,7 @@
     </parent>
 
     <artifactId>nifi-greymatter-data-nar</artifactId>
-    <version>${bundle.version}</version>
+    <version>${parent.version}</version>
     <packaging>nar</packaging>
     <properties>
         <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.deciphernow.greymatter</groupId>
             <artifactId>nifi-data-processors</artifactId>
-            <version>${bundle.version}</version>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
