@@ -32,7 +32,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.deciphernow.greymatter</groupId>
+            <groupId>io.greymatter</groupId>
             <artifactId>nifi-data-processors</artifactId>
             <version>${parent.version}</version>
         </dependency>
