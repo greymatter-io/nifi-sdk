@@ -17,8 +17,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.deciphernow.greymatter</groupId>
-        <artifactId>nifi-sdk</artifactId>
+        <groupId>io.greymatter</groupId>
+        <artifactId>nifi-data</artifactId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
 
@@ -76,12 +76,6 @@
           <groupId>eu.timepit</groupId>
           <artifactId>refined-scalaz_${scala.major.version}</artifactId>
           <version>${refined-scalaz.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${scala.major.version}</artifactId>
-            <version>${scalatest.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.scalacheck</groupId>

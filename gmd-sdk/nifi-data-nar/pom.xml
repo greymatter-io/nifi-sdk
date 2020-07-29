@@ -17,13 +17,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.deciphernow.greymatter</groupId>
-        <artifactId>nifi-sdk</artifactId>
+        <groupId>io.greymatter</groupId>
+        <artifactId>nifi-data</artifactId>
         <version>1.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>nifi-greymatter-data-nar</artifactId>
-    <version>${bundle.version}</version>
+    <artifactId>nifi-data-nar</artifactId>
+    <version>${parent.version}</version>
     <packaging>nar</packaging>
     <properties>
         <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -32,9 +32,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.deciphernow.greymatter</groupId>
+            <groupId>io.greymatter</groupId>
             <artifactId>nifi-data-processors</artifactId>
-            <version>${bundle.version}</version>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>

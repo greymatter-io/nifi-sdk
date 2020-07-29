@@ -22,12 +22,11 @@
 		<artifactId>nifi-nar-bundles</artifactId>
 		<version>1.11.4</version>
 	</parent>
-	<groupId>com.deciphernow.greymatter</groupId>
-	<artifactId>nifi-sdk</artifactId>
+	<groupId>io.greymatter</groupId>
+	<artifactId>nifi-data</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
-		<bundle.version>1.0.0</bundle.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -48,13 +47,12 @@
 	</modules>
 	<distributionManagement>
 		<repository>
-			<id>greymatter-nexus-releases</id>
-			<name>Internal Release</name>
-			<url>https://nexus.production.deciphernow.com/repository/maven-public/nifi-sdk/</url>
+			<id>oss-release</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 		<snapshotRepository>
-			<id>greymatter-nexus-snapshots</id>
-			<url>https://nexus.production.deciphernow.com/repository/maven-snapshots/nifi-sdk/</url>
+			<id>oss-snapshot</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<dependencies>
@@ -67,6 +65,28 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>com.deciphernow</groupId>
+				<artifactId>bouncycastle-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<!--suppress UnresolvedMavenProperty -->
+					<passphrase>${env.PGP_PASSPHRASE}</passphrase>
+					<!--suppress UnresolvedMavenProperty -->
+					<rings>${env.PGP_RINGS_ENCODED}</rings>
+					<!--suppress UnresolvedMavenProperty -->
+					<userId>${env.PGP_USER_ID}</userId>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
@@ -118,11 +138,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
-					<serverId>nexus</serverId>
-					<nexusUrl>https://nexus.production.deciphernow.com</nexusUrl>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -62,7 +62,7 @@ jobs:
 
       - run:
           name: Login to docker
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+          command: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD https://docker.greymatter.io/development/
 
       - run:
           name: pull required images
