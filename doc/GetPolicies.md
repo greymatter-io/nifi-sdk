@@ -26,8 +26,7 @@ Dynamic Properties allow the user to specify both the name and value of a proper
 
 | Name | Value | Description |
 | --- | --- | --- |
-| Header name | Attribute Expression Language | Send request header with a key matching the Dynamic Property Key and a value created by evaluating the Attribute Expression Language set in the value of the Dynamic Property.
-<br /><b>Supports Expression Language: true</b> |
+| Header name | Attribute Expression Language | Send request header with a key matching the Dynamic Property Key and a value created by evaluating the Attribute Expression Language set in the value of the Dynamic Property. <br /><b>Supports Expression Language: true</b> |
 
 ### Relationships: 
 
