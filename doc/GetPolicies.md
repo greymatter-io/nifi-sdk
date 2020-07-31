@@ -26,8 +26,7 @@ Dynamic Properties allow the user to specify both the name and value of a proper
 
 | Name | Value | Description |
 | --- | --- | --- |
-| Header name | Attribute Expression Language | Send request header with a key matching the Dynamic Property Key and a value created by evaluating the Attribute Expression Language set in the value of the Dynamic Property.
-<br /><b>Supports Expression Language: true</b> |
+| Header name | Attribute Expression Language | Send request header with a key matching the Dynamic Property Key and a value created by evaluating the Attribute Expression Language set in the value of the Dynamic Property. <br /><b>Supports Expression Language: true</b> |
 
 ### Relationships: 
 
@@ -40,8 +39,9 @@ Dynamic Properties allow the user to specify both the name and value of a proper
 
 | Name | Description |
 | --- | --- |
-| acm | The access control model JSON struct that is representative of the access control attributes to be assigned to the files. |
-| permission | A JSON struct comprised of the file permissions to be assigned. This is the input resulting from the [BuildPermissions](./BuildPermissions.md) processor | 
+| acm | The access control model JSON struct that is representative of the access control attributes to be assigned to the files. A sample structure with values is as follows <pre>{<br />  "version": "2.1.0",<br />  "classif": "U",<br />  "dissem_ctrls": ["FOUO"]<br />}</pre>  |
+| permission | A JSON struct comprised of the file permissions to be assigned. This is typically the input resulting from the [BuildPermissions](./BuildPermissions.md) processor. A sample structure with values is as follows <pre>{<br />  "create": {<br />    "allow": [<br />      "group/project_name/supergroup",<br />      "user/cn=alice,o=untrusted example,l=baltimore,st=md,c=us"<br />    ]<br />  },<br />  "read": {<br />    "allow": [<br />      "group/-everyone"<br />    ]<br />  },<br />  "update": {<br />    "allow": [<br />      "group/project_name/editors"<br />    ]<br />  },<br />  "delete": {<br />    "allow": [<br />      "group/project_name/supergroup"<br />    ]<br />  }<br />}</pre> |
+
 
 ### Writes Attributes:
 
@@ -51,7 +51,7 @@ Dynamic Properties allow the user to specify both the name and value of a proper
 | getpolicies.status.message | The status message that is returned |
 | getpolicies.response.body | In the instance where the status code received is not a success (2xx) then the response body will be put to the 'invokehttp.response.body' attribute of the request FlowFile. |
 | getpolicies.request.url | The request URL |
-| getpolicies.tx.id | The transaction ID that is returned after reading the response. |
+| getpolicies.<i></i>tx.<i></i>id | The transaction ID that is returned after reading the response. |
 | getpolicies.remote.dn | The DN of the remote server |
 | getpolicies.java.exception.class | The Java exception class raised when the processor fails. |
 | getpolicies.java.exception.message | The Java exception message raised when the processor fails. |
