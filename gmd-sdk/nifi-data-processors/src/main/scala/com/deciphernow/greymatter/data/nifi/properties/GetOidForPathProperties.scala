@@ -13,42 +13,44 @@ import org.apache.nifi.processor.util.StandardValidators
 
 trait GetOidForPathProperties extends CommonProperties with ErrorHandling {
 
-  protected lazy val userfieldObjectPolicyProperty = buildProperty("Userfield Folder Object Policy", "When provided, this is an override object policy to be assigned to the created userfield folder if the folder does not yet exist.").build()
+  protected lazy val userfieldObjectPolicyProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR),"Userfield Folder Object Policy", "When provided, this is an override object policy to be assigned to the created userfield folder if the folder does not yet exist.", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).defaultValue("${gmdata.userfieldfolderdobjectpolicy}").build()
 
-  protected lazy val userfieldOriginalObjectPolicyProperty = buildProperty("Userfield Folder Original Object Policy", "When provided, this is an override original object policy to be assigned to the created userfield folder if the folder does not yet exist.").build()
+  protected lazy val userfieldOriginalObjectPolicyProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), "Userfield Folder Original Object Policy", "When provided, this is an override original object policy to be assigned to the created userfield folder if the folder does not yet exist.", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).defaultValue("${gmdata.userfieldfolderoriginalobjectpolicy}").build()
 
-  protected lazy val userfieldSecurityProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), "Userfield Folder Security", "An interface (JSON) representation of the security block used for user interfaces, consisting of a label, foreground, and background that should be applied when creating the userfield folder.", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).build()
+  protected lazy val userfieldSecurityProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), "Userfield Folder Security", "An interface (JSON) representation of the security block used for user interfaces, consisting of a label, foreground, and background that should be applied when creating the userfield folder.", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).defaultValue("${gmdata.userfieldfoldersecurity}").build()
 
-  protected lazy val intermediatePrefixProperty = buildProperty("Intermediate Folder Prefix", "When provided, this path indicates intermediate folders that should exist between the userfield folder, and the folders passed in").build()
+  protected lazy val intermediatePrefixProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR),"Intermediate Folder Prefix", "When provided, this path indicates intermediate folders that should exist between the userfield folder, and the folders passed in", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).defaultValue("${gmdata.intermediatefolderprefix}").build()
 
-  protected lazy val intermediateObjectPolicyProperty = buildProperty("Intermediate Folder Object Policy", "When provided, this is an override policy to be assigned to any created intermediate folders as represented by the Intermediate Folder Prefix").build()
+  protected lazy val intermediateObjectPolicyProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR),"Intermediate Folder Object Policy", "When provided, this is an override policy to be assigned to any created intermediate folders as represented by the Intermediate Folder Prefix", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).defaultValue("${gmdata.intermediatefolderobjectpolicy}").build()
 
-  protected lazy val intermediateOriginalObjectPolicyProperty = buildProperty("Intermediate Folder Original Object Policy", "When provided, this is an override original object policy to be assigned to the created intermediate folder if the folder does not yet exist.").build()
+  protected lazy val intermediateOriginalObjectPolicyProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR),"Intermediate Folder Original Object Policy", "When provided, this is an override original object policy to be assigned to the created intermediate folder if the folder does not yet exist.", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).defaultValue("${gmdata.intermediatefolderoriginalobjectpolicy}").build()
 
-  protected lazy val intermediateSecurityProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), "Intermediate Folder Security", "An interface (JSON) representation of the security block used for user interfaces, consisting of a label, foreground, and background that should be applied when creating intermediate folders that prefix the provided filename path.", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).build()
+  protected lazy val intermediateSecurityProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), "Intermediate Folder Security", "An interface (JSON) representation of the security block used for user interfaces, consisting of a label, foreground, and background that should be applied when creating intermediate folders that prefix the provided filename path.", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).defaultValue("${gmdata.intermediatefoldersecurity}").build()
+
+  protected lazy val rootUrlProperty = rootUrlProp()
 
   protected lazy val getOidForPathProperties = List(objectPolicyProperty, originalObjectPolicyProperty, securityProperty, rootUrlProperty, sslContextServiceProperty, userfieldObjectPolicyProperty, userfieldOriginalObjectPolicyProperty, userfieldSecurityProperty, intermediatePrefixProperty, intermediateObjectPolicyProperty, intermediateOriginalObjectPolicyProperty, intermediateSecurityProperty, attributesToSendProperty)
 
   protected def parseUserfieldSecurity(implicit context: ProcessContext, flowFile: FlowFile) = parseSecurityObject(userfieldSecurityProperty)
 
-  protected def parseUserfieldObjectPolicy(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(userfieldObjectPolicyProperty, None).map(parseJson(userfieldObjectPolicyProperty.getName))
+  protected def parseUserfieldObjectPolicy(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(userfieldObjectPolicyProperty, Some(flowFile)).map(parseJson(userfieldObjectPolicyProperty.getName))
 
-  protected def parseUserfieldOriginalObjectPolicy(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(userfieldOriginalObjectPolicyProperty, None)
+  protected def parseUserfieldOriginalObjectPolicy(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(userfieldOriginalObjectPolicyProperty, Some(flowFile))
 
-  protected def parseIntermediatePrefix(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(intermediatePrefixProperty, None)
+  protected def parseIntermediatePrefix(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(intermediatePrefixProperty, Some(flowFile))
 
   protected def parseIntermediateSecurity(implicit context: ProcessContext, flowFile: FlowFile) = parseSecurityObject(intermediateSecurityProperty)
 
-  protected def parseIntermediateObjectPolicy(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(intermediateObjectPolicyProperty, None).map(parseJson(intermediateObjectPolicyProperty.getName))
+  protected def parseIntermediateObjectPolicy(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(intermediateObjectPolicyProperty, Some(flowFile)).map(parseJson(intermediateObjectPolicyProperty.getName))
 
-  protected def parseIntermediateOriginalObjectPolicy(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(intermediateOriginalObjectPolicyProperty, None)
+  protected def parseIntermediateOriginalObjectPolicy(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(intermediateOriginalObjectPolicyProperty, Some(flowFile))
 
   protected def parsePath(implicit flowFile: FlowFile) = parseRequiredAttribute("path")
 
   private def splitIntoFolders(path: String) = path.split("/").filter(name => name.nonEmpty && name != ".").toList
 
   protected def getPropertyConfig(implicit context: ProcessContext, flowFile: FlowFile) = for {
-    rootUrl <- IO.delay(parseRootUrl)
+    rootUrl <- IO.delay(parseRootUrl(rootUrlProperty)(context, Some(flowFile)))
     folders <- IO.delay(parsePath).attempt.map(_.map(splitIntoFolders)) map handleErrorAndContinue(description = "The path attribute was not able to be parsed from the flowfile")
     objectPolicy <- IO.fromEither(parseObjectPolicy).attempt.map(handleErrorAndShutdown("The Object Policy property was not correctly set"))
     security <- IO.delay(parseSecurity) map getOptionalProperty("The Security property was not correctly set")
@@ -60,7 +62,7 @@ trait GetOidForPathProperties extends CommonProperties with ErrorHandling {
     intermediateObjectPolicy <- IO.delay(parseIntermediateObjectPolicy) map getOptionalProperty("The Intermediate Folder Object Policy was not correctly set")
     intermediateSecurity <- IO.delay(parseIntermediateSecurity) map getOptionalProperty("The Intermediate Folder Security property was not correctly set")
     intermediateOriginalObjectPolicy <- IO.delay(parseIntermediateOriginalObjectPolicy)
-    attributesToSendRegex <- IO.delay(parseAttributesToSend.map(_.r))
+    attributesToSendRegex <- IO.delay(parseAttributesToSend(context, Some(flowFile)).map(_.r))
     headers <- IO.delay(getHeaders(attributesToSendRegex)(context, Some(flowFile)))
     config = GetOidForPathConfig(rootUrl, folders, objectPolicy, security, originalObjectPolicy, userfieldObjectPolicy, userfieldSecurity, userfieldOriginalObjectPolicy, intermediatePrefix, intermediateSecurity: Option[Security], intermediateObjectPolicy, intermediateOriginalObjectPolicy, headers)
   } yield config

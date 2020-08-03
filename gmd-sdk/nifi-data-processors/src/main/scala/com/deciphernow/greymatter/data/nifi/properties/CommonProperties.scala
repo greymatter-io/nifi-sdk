@@ -4,14 +4,14 @@ import com.deciphernow.greymatter.data.nifi.http.Security
 import com.deciphernow.greymatter.data.nifi.processors.utils.ErrorHandling
 import io.circe.generic.auto._
 import io.circe.parser.decode
-import org.apache.nifi.components.PropertyDescriptor
+import org.apache.nifi.components.{PropertyDescriptor, Validator}
 import org.apache.nifi.expression.ExpressionLanguageScope
 import org.apache.nifi.flowfile.FlowFile
 import org.apache.nifi.processor.ProcessContext
 import org.apache.nifi.processor.util.StandardValidators
 import org.apache.nifi.ssl.SSLContextService
 import org.apache.nifi.ssl.SSLContextService.ClientAuth
-import org.http4s.{ Header, Headers, Uri }
+import org.http4s.{Header, Headers, Uri}
 
 import scala.collection.JavaConverters._
 import scala.util.matching.Regex
@@ -29,12 +29,13 @@ trait CommonProperties extends PropertyUtils with ErrorHandling {
 
   protected def dynamicProperty(name: String) = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_KEY_PROPERTY_NAME_VALIDATOR), name, "", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).dynamic(true).build()
 
-  protected lazy val rootUrlProperty = buildRequiredProperty("Remote Url", "The RESTful endpoint for Grey Matter Data. This will be configured with the endpoint as routed through a local Grey Matter Proxy.").build()
+  protected def rootUrlProp(validators: List[Validator] = List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), scope: ExpressionLanguageScope = ExpressionLanguageScope.FLOWFILE_ATTRIBUTES) = buildRequiredProperty("Remote Url", "The RESTful endpoint for Grey Matter Data. This will be configured with the endpoint as routed through a local Grey Matter Proxy.", validators, scope).defaultValue("${gmdata.remoteurl}").build()
 
   protected lazy val sslContextServiceProperty = buildProperty("SSL Context Service", "The SSL Context Service used to provide client certificate information for TLS/SSL (https) connections. It is also used to connect to HTTPS Proxy.")
     .identifiesControllerService(classOf[SSLContextService]).build()
 
-  protected lazy val attributesToSendProperty = buildPropertyWithValidators(List(StandardValidators.REGULAR_EXPRESSION_VALIDATOR), "Attributes to Send", "Regular expression that defines which attributes to send as HTTP headers in the request. If not defined, no attributes are sent as headers. Also any dynamic properties set will be sent as headers. The dynamic property key will be the header key and the dynamic property value will be interpreted as expression language will be the header value.").build()
+  protected lazy val attributesToSendProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), "Attributes to Send", "Regular expression that defines which attributes to send as HTTP headers in the request. If not defined, no attributes are sent as headers. Also any dynamic properties set will be sent as headers. The dynamic property key will be the header key and the dynamic property value will be interpreted as expression language will be the header value.", scope = ExpressionLanguageScope.FLOWFILE_ATTRIBUTES)
+    .defaultValue("${gmdata.attributestosend}").build()
 
   protected def parseSSLContext(implicit context: ProcessContext) = Option(context.getProperty(sslContextServiceProperty)).flatMap { sslCont =>
     Option(sslCont.getValue).map(_ => sslCont.asControllerService(classOf[SSLContextService]).createSSLContext(ClientAuth.NONE))
@@ -59,7 +60,7 @@ trait CommonProperties extends PropertyUtils with ErrorHandling {
     case (propertyDescriptor, value) => propertyDescriptor.getName -> value
   }
 
-  protected def parseRootUrl(implicit context: ProcessContext, flowFile: Option[FlowFile] = None) = handleErrorAndShutdown("The Remote Url property was not correctly set")(Uri.fromString(parseProperty(rootUrlProperty)))
+  protected def parseRootUrl(rootUrlProperty: PropertyDescriptor)(implicit context: ProcessContext, flowFile: Option[FlowFile] = None) = handleErrorAndShutdown("The Remote Url property was not correctly set")(Uri.fromString(parseProperty(rootUrlProperty, flowFile)))
 
   protected def getHeaders(attributesToSendRegex: Option[Regex])(implicit context: ProcessContext, flowFile: Option[FlowFile] = None) = Headers((parseHeaders(attributesToSendRegex).getOrElse(Map()) ++ parseDynamicProperties).map {
     case (key, value) => Header(key, value)

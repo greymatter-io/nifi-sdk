@@ -3,6 +3,7 @@ package com.deciphernow.greymatter.data.nifi.properties
 import org.apache.nifi.flowfile.FlowFile
 import org.apache.nifi.processor.ProcessContext
 import com.deciphernow.greymatter.data.nifi.processors.utils.ErrorHandling
+import org.apache.nifi.expression.ExpressionLanguageScope
 import org.apache.nifi.processor.util.list.AbstractListProcessor._
 
 trait ListFilesProperties extends CommonProperties with ErrorHandling {
@@ -24,6 +25,8 @@ trait ListFilesProperties extends CommonProperties with ErrorHandling {
   protected lazy val minFileSizeProperty = buildRequiredProperty("Minimum File Size", "The minimum size, in bytes, that a file must be in order to be pulled").defaultValue("0").build()
 
   protected lazy val maxFileSizeProperty = buildProperty("Maximum File Size", "The maximum size, in bytes, that a file must be in order to be pulled").build()
+
+  protected lazy val rootUrlProperty = rootUrlProp(List(), ExpressionLanguageScope.NONE)
 
   protected lazy val listFilesProperties = List(rootUrlProperty, sslContextServiceProperty, inputDirectoryProperty, recurseProperty, urlFilterProperty, fileFilterProperty, pathFilterProperty, minFileAgeProperty, maxFileAgeProperty, minFileSizeProperty, maxFileSizeProperty, DISTRIBUTED_CACHE_SERVICE, LISTING_STRATEGY, TARGET_SYSTEM_TIMESTAMP_PRECISION)
 

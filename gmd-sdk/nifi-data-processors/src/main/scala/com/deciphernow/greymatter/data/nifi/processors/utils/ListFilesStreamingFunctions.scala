@@ -49,7 +49,7 @@ trait ListFilesStreamingFunctions extends ListFilesProperties with ProcessorRela
 
   def getProperties(inputDirectory: String)(implicit context: ProcessContext) = for {
     recurse <- IO.delay(parseRecurse)
-    rootUrl <- IO.delay(parseRootUrl)
+    rootUrl <- IO.delay(parseRootUrl(rootUrlProperty))
     path <- IO.delay(parseUrlFilter).map(pathWithUrlFilter(_, inputDirectory))
     fileFilter <- IO.delay(parseFileFilter)
     pathFilter <- IO.delay(if (recurse) parsePathFilter else None)
