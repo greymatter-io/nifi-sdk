@@ -1,7 +1,7 @@
 package com.deciphernow.greymatter.data.nifi.properties
 
 import io.circe.parser.parse
-import org.apache.nifi.components.{ PropertyDescriptor, Validator }
+import org.apache.nifi.components.{PropertyDescriptor, Validator}
 import org.apache.nifi.expression.ExpressionLanguageScope
 import org.apache.nifi.flowfile.FlowFile
 import org.apache.nifi.processor.ProcessContext
@@ -26,8 +26,7 @@ trait PropertyUtils {
   protected def buildRequiredProperty(name: String, description: String, validators: List[Validator] = List(), scope: ExpressionLanguageScope = ExpressionLanguageScope.NONE) = buildPropertyWithValidators(validators, name, description, scope, required = true)
 
   protected def parseProperty(property: PropertyDescriptor, flowFileOpt: Option[FlowFile] = None)(implicit context: ProcessContext) =
-    flowFileOpt.map(context.getProperty(property).evaluateAttributeExpressions(_))
-      .getOrElse(context.getProperty(property)).getValue
+    flowFileOpt.map(context.getProperty(property).evaluateAttributeExpressions(_)).getOrElse(context.getProperty(property)).getValue
 
   protected def parseOptionalProperty(property: PropertyDescriptor, flowFileOpt: Option[FlowFile] = None)(implicit context: ProcessContext) = Option(parseProperty(property, flowFileOpt))
     .flatMap(prop => if (prop.isEmpty) None else Some(prop))

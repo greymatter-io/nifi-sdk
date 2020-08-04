@@ -140,9 +140,6 @@ class GetOidForPathTest extends FunSpec with TestContext with Matchers with GetO
         }
       } ()
     }
-    it("should throw an error if a required property is missing") {
-      an[AssertionError] should be thrownBy runProcessorTests(attributeMap(_)) { (_, _, _) => } { (_, _) => }
-    }
     it("should produce nothing but not crash if flowfile is null") {
       runProcessorTests(attributeMap(_), enqueue = false) { (runner: TestRunner, _, _) =>
         runner.assertTransferCount(RelSuccess, 0)

@@ -34,8 +34,9 @@ import org.http4s.multipart.{Multipart, Part}
 import org.http4s.{Header, Headers, MediaType, Method, Uri}
 import org.scalatest._
 import fs2.{Pure, Stream}
-import scala.concurrent.duration._
+import org.apache.nifi.expression.ExpressionLanguageScope
 
+import scala.concurrent.duration._
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext
 
@@ -48,6 +49,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
   val numberOfFolders = 2
   val levels = 3
   val totalFileNumber = numberOfFiles * (scala.math.pow(numberOfFolders, levels + 1) - 1)
+  override lazy val rootUrlProperty = rootUrlProp(List(), ExpressionLanguageScope.NONE)
 
   private def createMetadata(parentoid: String, objectPolicy: Json, action: String, mimeType: Option[String] = Some("text/plain"), name: String = randomString(), isFile: Option[Boolean] = Some(true)) = {
     Metadata(parentoid, name, objectPolicy, mimeType, None, action, None, None, None, None, None, None, None, None, isfile = isFile)
