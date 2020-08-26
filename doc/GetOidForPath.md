@@ -17,24 +17,24 @@ In the list below, the names of required properties appear in bold. Any other pr
 | <b>Object Policy</b> | ${gmdata.objectpolicy} |  | An interface (JSON) representation of a lisp like language that conveys that access constraints for retrieval of the file once stored in Grey Matter Data. This flexible policy allows for translating complex authorization schemes from a variety of systems. <br /><b>Supports Expression Language: true</b> |
 | Original Object Policy | ${gmdata.originalobjectpolicy} |  | A static string representing the original object policy from the source system. This may be a JSON structure but escaped into a string format.<br /><b>Supports Expression Language: true</b> |
 | Security | ${gmdata.security} |  | A JSON representation of the security block used for user interfaces, consisting of a label, foreground, and background.<br /><b>Supports Expression Language: true</b> |
-| <b>Remote URL</b> | | | The RESTful endpoint for Grey Matter Data. This will be configured with the endpoint as routed through a local Grey Matter Proxy. |
+| <b>Remote URL</b> | ${gmdata.remoteurl} | | The RESTful endpoint for Grey Matter Data. This will be configured with the endpoint as routed through a local Grey Matter Proxy.<br /><b>Supports Expression Language: true</b> |
 | SSL Context Service | | | The [SSL Context Service](https://nifi.apache.org/docs/nifi-docs/components/org.apache.nifi/nifi-ssl-context-service-nar/1.11.4/org.apache.nifi.ssl.StandardSSLContextService/) used to provide client certificate information for TLS/SSL (https) connections. It is also used to connect to HTTPS Proxy. |
-| Userfield Folder Object Policy | | | When provided, this is an override object policy to be assigned to the created userfield folder if the folder does not yet exist. |
-| Userfield Folder Original Object Policy | | | When provided, this is an override original object policy to be assigned to the created userfield folder if the folder does not yet exist. |
-| Userfield Folder Security | | | An interface (JSON) representation of the security block used for user interfaces, consisting of a label, foreground, and background that should be applied when creating the userfield folder.<br /><b>Supports Expression Language: true</b> |
-| Intermediate Folder Prefix | | | When provided, this path indicates intermediate folders that should exist between the userfield folder, and the folders passed in. |
-| Intermediate Folder Object Policy | | | When provided, this is an override policy to be assigned to any created intermediate folders as represented by the Intermediate Folder Prefix. |
-| Intermediate Folder Original Object Policy | | | When provided, this is an override original object policy to be assigned to the created intermediate folder if the folder does not yet exist. |
-| Intermediate Folder Security | | | An interface (JSON) representation of the security block used for user interfaces, consisting of a label, foreground, and background that should be applied when creating intermediate folders that prefix the provided filename path.<br /><b>Supports Expression Language: true</b> |
-| Attributes to Send | | | Regular expression that defines which attributes to send as HTTP headers in the request. If not defined, no attributes are sent as headers. Also any dynamic properties set will be sent as headers. The dynamic property key will be the header key and the dynamic property value will be interpreted as expression language will be the header value. |
+| Userfield Folder Object Policy | ${gmdata.userfieldfolderdobjectpolicy} | | When provided, this is an override object policy to be assigned to the created userfield folder if the folder does not yet exist.<br /><b>Supports Expression Language: true</b> |
+| Userfield Folder Original Object Policy | ${gmdata.userfieldfolderoriginalobjectpolicy} | | When provided, this is an override original object policy to be assigned to the created userfield folder if the folder does not yet exist.<br /><b>Supports Expression Language: true</b> |
+| Userfield Folder Security | ${gmdata.userfieldfoldersecurity} | | An interface (JSON) representation of the security block used for user interfaces, consisting of a label, foreground, and background that should be applied when creating the userfield folder.<br /><b>Supports Expression Language: true</b> |
+| Intermediate Folder Prefix | ${gmdata.intermediatefolderprefix} | | When provided, this path indicates intermediate folders that should exist between the userfield folder, and the folders passed in.<br /><b>Supports Expression Language: true</b> |
+| Intermediate Folder Object Policy | ${gmdata.intermediatefolderobjectpolicy} | | When provided, this is an override policy to be assigned to any created intermediate folders as represented by the Intermediate Folder Prefix.<br /><b>Supports Expression Language: true</b> |
+| Intermediate Folder Original Object Policy | ${gmdata.intermediatefolderoriginalobjectpolicy} | | When provided, this is an override original object policy to be assigned to the created intermediate folder if the folder does not yet exist.<br /><b>Supports Expression Language: true</b> |
+| Intermediate Folder Security | ${gmdata.intermediatefoldersecurity} | | An interface (JSON) representation of the security block used for user interfaces, consisting of a label, foreground, and background that should be applied when creating intermediate folders that prefix the provided filename path.<br /><b>Supports Expression Language: true</b> |
+| Attributes to Send | ${gmdata.attributestosend} | | Regular expression that defines which attributes to send as HTTP headers in the request. If not defined, no attributes are sent as headers. Also any dynamic properties set will be sent as headers. The dynamic property key will be the header key and the dynamic property value will be interpreted as expression language will be the header value.<br /><b>Supports Expression Language: true</b> |
 
 ### Dynamic Properties:
 
-Dynamic Properties allow the user to specify both the name and value of a property.
+Dynamic Properties allow the user to specify an arbitrary name and value of a property. Any dynamic properties set in this processor will be sent as headers.
 
 | Name | Value | Description |
 | --- | --- | --- |
-| Header name | Attribute Expression Language | Send request header with a key matching the Dynamic Property Key and a value created by evaluating the Attribute Expression Language set in the value of the Dynamic Property.
+| Header name | Attribute Expression Language | Send request header with a key matching the Dynamic Property Key and a value created by evaluating the Attribute Expression Language set in the value of the Dynamic Property. You can also set a hardcoded value without using expression language.
 <br /><b>Supports Expression Language: true</b> |
 
 ### Relationships: 
