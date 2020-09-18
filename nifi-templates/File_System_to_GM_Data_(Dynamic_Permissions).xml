@@ -966,7 +966,7 @@ and converts them to a structure denoting permitted capabilities.</label>
             <bundle>
                 <artifact>nifi-greymatter-data-nar</artifact>
                 <group>com.deciphernow.greymatter</group>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.1</version>
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
@@ -1077,7 +1077,7 @@ and converts them to a structure denoting permitted capabilities.</label>
             <bundle>
                 <artifact>nifi-greymatter-data-nar</artifact>
                 <group>com.deciphernow.greymatter</group>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.1</version>
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
@@ -1682,7 +1682,7 @@ and converts them to a structure denoting permitted capabilities.</label>
             <bundle>
                 <artifact>nifi-greymatter-data-nar</artifact>
                 <group>com.deciphernow.greymatter</group>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.1</version>
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
@@ -2040,7 +2040,7 @@ and converts them to a structure denoting permitted capabilities.</label>
             <bundle>
                 <artifact>nifi-greymatter-data-nar</artifact>
                 <group>com.deciphernow.greymatter</group>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.1</version>
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
