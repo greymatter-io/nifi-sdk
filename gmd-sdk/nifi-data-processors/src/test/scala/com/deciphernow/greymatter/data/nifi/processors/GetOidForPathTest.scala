@@ -130,6 +130,21 @@ class GetOidForPathTest extends FunSpec with TestContext with Matchers with GetO
       }
     }
 
+    it("should throw an error if user dn is incorrect") {
+      runProcessorTests(attributeMap(_) ++ Map("USER_DN" -> "CN=nifinpeBADNAME,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")) { (runner: TestRunner, configuration, sslContext) =>
+        runner.assertTransferCount(RelSuccess, 0)
+        runner.assertTransferCount(RelFailure, 1)
+        for (flowFile: MockFlowFile <- runner.getFlowFilesForRelationship(RelFailure).asScala) {
+          flowFile.assertAttributeExists("getoidforpath.scala.exception.class")
+          flowFile.assertAttributeExists("getoidforpath.scala.exception.message")
+        }
+      } { (runner, config) =>
+        runner.setProperty(attributesToSendProperty, """\bUSER_DN\b""")
+        runner.setProperty(rootUrlProperty, config.rootURL)
+        config.intermediate.map(runner.setProperty(intermediatePrefixProperty, _))
+      }
+    }
+
     it("Should fail to self-identify if attributes to send property is not set and gm data requires header") {
       runProcessorTests(attributeMap(_) ++ Map("USER_DN" -> "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")) { (runner: TestRunner, configuration, sslContext) =>
         runner.assertTransferCount(RelSuccess, 0)
