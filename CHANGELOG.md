@@ -1,3 +1,11 @@
+## September
+- Enhancements to Processors
+  - ListFiles support for expression language
+  - GetOIDForPath support for expression language
+- Bugfixes for GetOIDForPath
+  - Expose status code for error
+- Release 1.0.1
+
 ## July 2020
 - Cleaning up repository
 - Added nifi flow templates
