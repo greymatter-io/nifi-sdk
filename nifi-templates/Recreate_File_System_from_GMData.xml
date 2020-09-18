@@ -2076,7 +2076,7 @@ try {
             <bundle>
                 <artifact>nifi-greymatter-data-nar</artifact>
                 <group>com.deciphernow.greymatter</group>
-                <version>1.0.1</version>
+                <version>1.0.2-SNAPSHOT</version>
             </bundle>
             <config>
                 <bulletinLevel>INFO</bulletinLevel>
