@@ -11,6 +11,7 @@ import org.apache.nifi.logging.ComponentLog
 import org.apache.nifi.processor.{ ProcessContext, ProcessSession, Relationship }
 import org.http4s.client.Client
 import org.http4s.client.blaze.BlazeClientBuilder
+import scala.concurrent.duration._
 
 import scala.concurrent.ExecutionContext
 
@@ -24,7 +25,8 @@ trait ProcessorUtils extends CommonProperties with ProcessorRelationships with E
   protected def initializeClient(context: ProcessContext, blocker: Blocker, clientRef: Ref[IO, Client[IO]])(implicit ctxShift: ContextShift[IO], ec: ExecutionContext) = {
     for {
       sslContext <- blocker.delay[IO, Option[SSLContext]](parseSSLContext(context))
-      client <- BlazeClientBuilder[IO](ec, sslContext).withCheckEndpointAuthentication(false).allocated.map(_._1)
+      httpTimeout <- blocker.delay[IO, FiniteDuration](parseHttpTimeout(context).getOrElse(5.seconds))
+      client <- BlazeClientBuilder[IO](ec, sslContext).withConnectTimeout(httpTimeout).withRequestTimeout(httpTimeout).withCheckEndpointAuthentication(false).allocated.map(_._1)
       updateClient <- clientRef.modify(old => (client, old))
     } yield updateClient
   }.unsafeRunSync()
@@ -45,3 +47,4 @@ trait ProcessorUtils extends CommonProperties with ProcessorRelationships with E
   })
 
 }
+

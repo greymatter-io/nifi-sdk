@@ -29,7 +29,7 @@ trait GetOidForPathProperties extends CommonProperties with ErrorHandling {
 
   protected lazy val rootUrlProperty = rootUrlProp()
 
-  protected lazy val getOidForPathProperties = List(objectPolicyProperty, originalObjectPolicyProperty, securityProperty, rootUrlProperty, sslContextServiceProperty, userfieldObjectPolicyProperty, userfieldOriginalObjectPolicyProperty, userfieldSecurityProperty, intermediatePrefixProperty, intermediateObjectPolicyProperty, intermediateOriginalObjectPolicyProperty, intermediateSecurityProperty, attributesToSendProperty)
+  protected lazy val getOidForPathProperties = List(objectPolicyProperty, originalObjectPolicyProperty, securityProperty, rootUrlProperty, sslContextServiceProperty, userfieldObjectPolicyProperty, userfieldOriginalObjectPolicyProperty, userfieldSecurityProperty, intermediatePrefixProperty, intermediateObjectPolicyProperty, intermediateOriginalObjectPolicyProperty, intermediateSecurityProperty, attributesToSendProperty, httpTimeoutProperty)
 
   protected def parseUserfieldSecurity(implicit context: ProcessContext, flowFile: FlowFile) = parseSecurityObject(userfieldSecurityProperty)
 

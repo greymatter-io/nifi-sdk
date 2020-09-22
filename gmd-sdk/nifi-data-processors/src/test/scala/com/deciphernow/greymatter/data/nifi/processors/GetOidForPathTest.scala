@@ -18,7 +18,7 @@ package com.deciphernow.greymatter.data.nifi.processors
 
 import java.io.ByteArrayInputStream
 
-import cats.effect.{ ContextShift, IO, Timer }
+import cats.effect.{ConcurrentEffect, ContextShift, IO, Timer}
 import com.deciphernow.greymatter.data.TestContext
 import com.deciphernow.greymatter.data.nifi.http.Security
 import com.deciphernow.greymatter.data.nifi.properties.GetOidForPathProperties
@@ -26,14 +26,20 @@ import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.parser._
 import javax.net.ssl.SSLContext
-import org.apache.nifi.util.{ MockFlowFile, TestRunner, TestRunners }
-import org.http4s.{ Header, Headers, Uri }
+import org.apache.nifi.util.{MockFlowFile, TestRunner, TestRunners}
+import org.http4s.{Header, Headers, HttpRoutes, Uri}
 import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.dsl.Http4sDsl
+import org.http4s.implicits._
+import org.http4s.server.Router
+import org.http4s.server.blaze.BlazeServerBuilder
 import org.scalatest._
+import fs2.Stream
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
-class GetOidForPathTest extends FunSpec with TestContext with Matchers with GetOidForPathProperties {
+class GetOidForPathTest extends FunSpec with TestContext with Matchers with GetOidForPathProperties with Http4sDsl[IO]{
 
   case class Configuration(rootURL: String,
       fileName: String,
@@ -160,6 +166,37 @@ class GetOidForPathTest extends FunSpec with TestContext with Matchers with GetO
       }
     }
 
+    it("should throw a timeout error if http calls take longer than the httpTimeout property") {
+      val host = "0.0.0.0"
+      val port  = 8989
+      implicit val ec = ExecutionContext.global
+      implicit val ce = ConcurrentEffect[IO]
+
+      def sleepyServer(timeoutDuration: FiniteDuration)(implicit ce: ConcurrentEffect[IO]) = {
+        val service = HttpRoutes.of[IO] {case _ => IO.sleep(timeoutDuration).flatMap(_ => Ok(""))}
+        val httpApp = Router("/" -> service).orNotFound
+        BlazeServerBuilder[IO].bindHttp(port, host).withHttpApp(httpApp).serve
+      }
+
+      val test = IO {
+        runProcessorTests(attributeMap(_)) { (runner: TestRunner, configuration, sslContext) =>
+          runner.assertTransferCount(RelSuccess, 0)
+          runner.assertTransferCount(RelFailure, 1)
+          for (flowFile: MockFlowFile <- runner.getFlowFilesForRelationship(RelFailure).asScala) {
+            flowFile.assertAttributeExists("getoidforpath.scala.exception.class")
+            flowFile.assertAttributeExists("getoidforpath.scala.exception.message")
+            flowFile.getAttribute("getoidforpath.scala.exception.message").contains("TimeoutException") shouldBe true
+          }
+        } { (runner, config) =>
+          runner.setProperty("USER_DN", "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")
+          runner.setProperty(rootUrlProperty, s"http://$host:$port")
+          runner.setProperty(httpTimeoutProperty, s"1")
+        }
+      }
+      (Stream.eval(IO.sleep(1 second)flatMap(_ => test)) concurrently sleepyServer(10.seconds)).compile.drain.unsafeRunSync()
+
+    }
+
     it("Should fail to self-identify if attributes to send property is not set and gm data requires header") {
       runProcessorTests(attributeMap(_) ++ Map("USER_DN" -> "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")) { (runner: TestRunner, configuration, sslContext) =>
         runner.assertTransferCount(RelSuccess, 0)
@@ -170,6 +207,7 @@ class GetOidForPathTest extends FunSpec with TestContext with Matchers with GetO
         }
       } ()
     }
+
     it("should produce nothing but not crash if flowfile is null") {
       runProcessorTests(attributeMap(_), enqueue = false) { (runner: TestRunner, _, _) =>
         runner.assertTransferCount(RelSuccess, 0)

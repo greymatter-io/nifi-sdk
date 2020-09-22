@@ -5,7 +5,6 @@ import org.apache.nifi.processor.ProcessContext
 import com.deciphernow.greymatter.data.nifi.processors.utils.ErrorHandling
 import org.apache.nifi.expression.ExpressionLanguageScope
 import org.apache.nifi.processor.util.StandardValidators
-import org.apache.nifi.processor.util.list.AbstractListProcessor._
 
 trait ListFilesProperties extends CommonProperties with ErrorHandling {
 
@@ -29,7 +28,7 @@ trait ListFilesProperties extends CommonProperties with ErrorHandling {
 
   protected lazy val rootUrlProperty = rootUrlProp(scope = ExpressionLanguageScope.VARIABLE_REGISTRY)
 
-  protected lazy val listFilesProperties = List(rootUrlProperty, sslContextServiceProperty, inputDirectoryProperty, recurseProperty, urlFilterProperty, fileFilterProperty, pathFilterProperty, minFileAgeProperty, maxFileAgeProperty, minFileSizeProperty, maxFileSizeProperty)
+  protected lazy val listFilesProperties = List(rootUrlProperty, sslContextServiceProperty, inputDirectoryProperty, recurseProperty, urlFilterProperty, fileFilterProperty, pathFilterProperty, minFileAgeProperty, maxFileAgeProperty, minFileSizeProperty, maxFileSizeProperty, httpTimeoutProperty)
 
   protected def parseInputDirectory(implicit context: ProcessContext, flowFile: Option[FlowFile] = None) = parseProperty(inputDirectoryProperty)
 
