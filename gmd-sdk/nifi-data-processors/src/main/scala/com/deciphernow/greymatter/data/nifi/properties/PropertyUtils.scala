@@ -25,8 +25,12 @@ trait PropertyUtils {
 
   protected def buildRequiredProperty(name: String, description: String, validators: List[Validator] = List(), scope: ExpressionLanguageScope = ExpressionLanguageScope.NONE) = buildPropertyWithValidators(validators, name, description, scope, required = true)
 
-  protected def parseProperty(property: PropertyDescriptor, flowFileOpt: Option[FlowFile] = None)(implicit context: ProcessContext) =
-    flowFileOpt.map(context.getProperty(property).evaluateAttributeExpressions(_)).getOrElse(context.getProperty(property)).getValue
+  protected def parseProperty(property: PropertyDescriptor, flowFileOpt: Option[FlowFile] = None)(implicit context: ProcessContext) = {
+    val prop = context.getProperty(property)
+    (flowFileOpt map prop.evaluateAttributeExpressions).getOrElse{
+      if (property.isExpressionLanguageSupported) prop.evaluateAttributeExpressions() else prop
+    }.getValue
+  }
 
   protected def parseOptionalProperty(property: PropertyDescriptor, flowFileOpt: Option[FlowFile] = None)(implicit context: ProcessContext) = Option(parseProperty(property, flowFileOpt))
     .flatMap(prop => if (prop.isEmpty) None else Some(prop))

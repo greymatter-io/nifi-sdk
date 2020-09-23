@@ -116,6 +116,21 @@ class GetOidForPathTest extends FunSpec with TestContext with Matchers with GetO
       }
     }
 
+    it("should be able to read properties from environment variables") {
+      runProcessorTests(attributeMap(_)) { (runner: TestRunner, configuration, sslContext) =>
+        val headers = Headers(List(Header("USER_DN", "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")))
+        runner.assertTransferCount(RelSuccess, 1)
+        runner.assertTransferCount(RelFailure, 0)
+        runner.assertAllFlowFilesContainAttribute("gmdata.parentoid")
+        checkFolderOid(runner, sslContext, headers, configuration)
+      } { (runner, config) =>
+        runner.setVariable("USER_DN", "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")
+        runner.setProperty("USER_DN", "${USER_DN}")
+        runner.setProperty(rootUrlProperty, config.rootURL)//config.rootURL)
+        config.intermediate.map(runner.setProperty(intermediatePrefixProperty, _))
+      }
+    }
+
     it("should create folders in GM Data successfully given the correct attributes") {
       runProcessorTests(attributeMap(_) ++ Map("USER_DN" -> "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")) { (runner: TestRunner, configuration, sslContext) =>
         runner.assertTransferCount(RelSuccess, 1)
