@@ -49,7 +49,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
   val numberOfFolders = 2
   val levels = 3
   val totalFileNumber = numberOfFiles * (scala.math.pow(numberOfFolders, levels + 1) - 1)
-  override lazy val rootUrlProperty = rootUrlProp(List(), ExpressionLanguageScope.NONE)
+  override lazy val rootUrlProperty = rootUrlProp(scope = ExpressionLanguageScope.VARIABLE_REGISTRY)
 
   private def createMetadata(parentoid: String, objectPolicy: Json, action: String, mimeType: Option[String] = Some("text/plain"), name: String = randomString(), isFile: Option[Boolean] = Some(true)) = {
     Metadata(parentoid, name, objectPolicy, mimeType, None, action, None, None, None, None, None, None, None, None, isfile = isFile)
@@ -121,8 +121,9 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
   def happyPathTest(recurse: Boolean, action: String = "C", policies: List[String] = policies, rootUrl: String = gmDataUrl) = runProcessorTests({ (runner, directory, objectPolicy) =>
     val header: Header = headers.toList.head
     runner.setVariable(header.name.toString.toUpperCase, header.value)
+    runner.setVariable("ROOT_URL", rootUrl)
     runner.setProperty(header.name.toString.toUpperCase, "${USER_DN}")
-    runner.setProperty(rootUrlProperty, rootUrl)
+    runner.setProperty(rootUrlProperty, "${ROOT_URL}")
     runner.setProperty(inputDirectoryProperty, someDirectory(directory))
     runner.setProperty(recurseProperty, recurse.toString)
     val sslContext = addSSLService(runner, sslContextServiceProperty)

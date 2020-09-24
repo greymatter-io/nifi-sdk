@@ -126,7 +126,7 @@ class GetOidForPathTest extends FunSpec with TestContext with Matchers with GetO
       } { (runner, config) =>
         runner.setVariable("USER_DN", "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")
         runner.setProperty("USER_DN", "${USER_DN}")
-        runner.setProperty(rootUrlProperty, config.rootURL)//config.rootURL)
+        runner.setProperty(rootUrlProperty, config.rootURL)
         config.intermediate.map(runner.setProperty(intermediatePrefixProperty, _))
       }
     }

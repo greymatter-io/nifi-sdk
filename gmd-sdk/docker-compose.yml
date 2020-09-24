@@ -10,7 +10,7 @@ services:
     networks:
       - nifi
     volumes:
-      - ./nifi-data-nar/target/nifi-greymatter-data-nar-1.0.2.nar:/opt/nifi/nifi-current/lib/nifi-greymatter-data-nar-1.0.2.nar
+      - ./nifi-data-nar/target/nifi-data-nar-1.0.2-SNAPSHOT.nar:/opt/nifi/nifi-current/lib/nifi-data-nar-1.0.2-SNAPSHOT.nar
       - ../nifi-templates/:/opt/nifi/nifi-current/conf/templates/
       - ./nifiTestSetup/testFiles:/opt/nifi/nifi-current/testFiles
       - ./certs:/home/nifi/certs
