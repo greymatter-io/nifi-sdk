@@ -56,7 +56,7 @@ class ListFiles extends AbstractProcessor with ListFilesStreamingFunctions {
       logger <- Stream.eval(IO.delay(getLogger))
       stream = getMetadataStreamOrThrowError(clientRef)(context, ctxShift)
       listed <- listFlowfiles(context, session, getLogger)(stream, lastTimestampListed, lastIds, justElectedPrimaryNode, lastTimestampKey, idPrefix).attempt
-      _ = logErrors(logger, { newState: SaveState => s"Successfully listed ${newState.count} files"}, "Failed to list files")(listed)
+      _ <- Stream.eval(logErrors(logger, { newState: SaveState => s"Successfully listed ${newState.count} files"}, "Failed to list files")(listed))
     } yield listed
   }.compile.drain.unsafeRunSync()
 

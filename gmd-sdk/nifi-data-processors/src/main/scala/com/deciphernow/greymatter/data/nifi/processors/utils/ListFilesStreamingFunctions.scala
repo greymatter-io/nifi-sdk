@@ -41,10 +41,12 @@ trait ListFilesStreamingFunctions extends ListFilesProperties with ProcessorRela
   }.map(throwListFilesError(s"$rootUrl/list/$path")(_).map(_.copy(rootUrlOption = Some(rootUrl.renderString))))
 
   def getMetadataStream(clientRef: Ref[IO, Client[IO]], inputDirectory: String)(implicit context: ProcessContext, cs: ContextShift[IO]) = for {
-    properties <- Stream.eval(getProperties(inputDirectory))
-    filter = filterFiles(properties.fileFilter, properties.minFileAge, properties.minFileSize, properties.maxFileAge, properties.maxFileSize)(_)
     client <- Stream.eval(clientRef.get)
-    filesEither <- streamFilesFromGMData(properties.recurse, properties.pathFilter)(properties.path)(properties.rootUrl, client, properties.headers, cs).through(filter)
+    propertiesEither <- Stream.eval(getProperties(inputDirectory)).attempt
+    filesEither <- propertiesEither.flatTraverse{ properties =>
+      val filter = filterFiles(properties.fileFilter, properties.minFileAge, properties.minFileSize, properties.maxFileAge, properties.maxFileSize)(_)
+      streamFilesFromGMData(properties.recurse, properties.pathFilter)(properties.path)(properties.rootUrl, client, properties.headers, cs).through(filter)
+    }
   } yield filesEither
 
   def getProperties(inputDirectory: String)(implicit context: ProcessContext) = for {

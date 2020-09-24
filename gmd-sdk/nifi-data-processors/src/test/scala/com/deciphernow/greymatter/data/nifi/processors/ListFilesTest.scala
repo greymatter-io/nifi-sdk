@@ -120,7 +120,8 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
 
   def happyPathTest(recurse: Boolean, action: String = "C", policies: List[String] = policies, rootUrl: String = gmDataUrl) = runProcessorTests({ (runner, directory, objectPolicy) =>
     val header: Header = headers.toList.head
-    runner.setProperty(header.name.toString().toUpperCase(), header.value)
+    runner.setVariable(header.name.toString.toUpperCase, header.value)
+    runner.setProperty(header.name.toString.toUpperCase, "${USER_DN}")
     runner.setProperty(rootUrlProperty, rootUrl)
     runner.setProperty(inputDirectoryProperty, someDirectory(directory))
     runner.setProperty(recurseProperty, recurse.toString)
