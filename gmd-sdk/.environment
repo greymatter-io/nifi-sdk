@@ -1,0 +1,3 @@
+export PGP_PASSPHRASE='skokie'
+export PGP_RINGS="$(cat ./private.asc)"
+export PGP_USER_ID='keyser.soze@suspects.com'
