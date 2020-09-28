@@ -14,10 +14,17 @@ In the list below, the names of required properties appear in bold. Any other pr
 
 | Name | Default Value | Allowable Values | Description |
 | --- | --- | --- | --- |
-| <b>Remote URL</b> | | | The RESTful endpoint for Grey Matter Data. This will be configured with the endpoint as routed through a local Grey Matter Proxy. |
+| <b>Remote URL</b> | ${gmdata.remoteurl} | | The RESTful endpoint for Grey Matter Data. This will be configured with the endpoint as routed through a local Grey Matter Proxy. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
 | SSL Context Service | | | The [SSL Context Service](https://nifi.apache.org/docs/nifi-docs/components/org.apache.nifi/nifi-ssl-context-service-nar/1.11.4/org.apache.nifi.ssl.StandardSSLContextService/) used to provide client certificate information for TLS/SSL (https) connections. It is also used to connect to HTTPS Proxy. |
-| <b>Input Directory</b> | | | The input directory from which files to pull files. |
-| <b>Recurse Subdirectories</b> | true | true<br />false | Indicates whether to list files from subdirectories of the directory. |
+| <b>Input Directory</b> | | | The input directory from which files to pull files. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| <b>Recurse Subdirectories</b> | true | true<br />false | Indicates whether to list files from subdirectories of the directory. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| URL Filter Argument | | | When present, this will be added as querystring arguments for requests to the /list call. Supported querystring keys are childCount, count, last, and tstamp. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| <b>File Filter</b> | [^\.].* | | Only files whose names match the given regular expression will be picked up. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| Path Filter | | | When Recurse Subdirectories is true, then only subdirectories whose path matches the given regular expression will be scanned. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| <b>Minimum File Age</b> | 0 | | The minimum age,in seconds, that a file must be in order to be pulled; any file younger than this amount of time (according to last modification date) will be ignored. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| Maximum File Age | | | The maximum age, in seconds, that a file must be in order to be pulled; any file older than this amount of time (according to last modification date) will be ignored. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| <b>Minimum File Size</b> | 0 | | The minimum size, in bytes, that a file must be in order to be pulled. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| Maximum File Size | | | The maximum size, in bytes, that a file must be in order to be pulled. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
 
 ### Dynamic Properties:
 
