@@ -103,6 +103,13 @@
             <artifactId>http4s-blaze-client_${scala.major.version}</artifactId>
             <version>${http4s.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.http4s</groupId>
+            <artifactId>http4s-blaze-server_${scala.major.version}</artifactId>
+            <version>${http4s.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.http4s</groupId>
             <artifactId>http4s-dsl_${scala.major.version}</artifactId>

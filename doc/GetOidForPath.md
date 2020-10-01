@@ -27,6 +27,7 @@ In the list below, the names of required properties appear in bold. Any other pr
 | Intermediate Folder Original Object Policy | ${gmdata.intermediatefolderoriginalobjectpolicy} | | When provided, this is an override original object policy to be assigned to the created intermediate folder if the folder does not yet exist.<br /><b>Supports Expression Language: true</b> |
 | Intermediate Folder Security | ${gmdata.intermediatefoldersecurity} | | An interface (JSON) representation of the security block used for user interfaces, consisting of a label, foreground, and background that should be applied when creating intermediate folders that prefix the provided filename path.<br /><b>Supports Expression Language: true</b> |
 | Attributes to Send | ${gmdata.attributestosend} | | Regular expression that defines which attributes to send as HTTP headers in the request. If not defined, no attributes are sent as headers. Also any dynamic properties set will be sent as headers. The dynamic property key will be the header key and the dynamic property value will be interpreted as expression language will be the header value.<br /><b>Supports Expression Language: true</b> |
+| Http Timeout | 5 | | The duration. in seconds, to wait before an http connection times out. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
 
 ### Dynamic Properties:
 

@@ -12,6 +12,7 @@ import org.apache.nifi.processor.util.StandardValidators
 import org.apache.nifi.ssl.SSLContextService
 import org.apache.nifi.ssl.SSLContextService.ClientAuth
 import org.http4s.{Header, Headers, Uri}
+import scala.concurrent.duration._
 
 import scala.collection.JavaConverters._
 import scala.util.matching.Regex
@@ -36,6 +37,10 @@ trait CommonProperties extends PropertyUtils with ErrorHandling {
 
   protected lazy val attributesToSendProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), "Attributes to Send", "Regular expression that defines which attributes to send as HTTP headers in the request. If not defined, no attributes are sent as headers. Also any dynamic properties set will be sent as headers. The dynamic property key will be the header key and the dynamic property value will be interpreted as expression language will be the header value.", scope = ExpressionLanguageScope.FLOWFILE_ATTRIBUTES)
     .defaultValue("${gmdata.attributestosend}").build()
+
+  protected lazy val httpTimeoutProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR),"Http Timeout", "The duration. in seconds, to wait before an http connection times out.", scope = ExpressionLanguageScope.VARIABLE_REGISTRY).defaultValue("5").build()
+
+  protected def parseHttpTimeout(implicit context: ProcessContext) = parseOptionalProperty(httpTimeoutProperty, None).map(_.toInt.seconds)
 
   protected def parseSSLContext(implicit context: ProcessContext) = Option(context.getProperty(sslContextServiceProperty)).flatMap { sslCont =>
     Option(sslCont.getValue).map(_ => sslCont.asControllerService(classOf[SSLContextService]).createSSLContext(ClientAuth.NONE))

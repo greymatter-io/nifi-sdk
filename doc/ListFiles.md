@@ -25,6 +25,7 @@ In the list below, the names of required properties appear in bold. Any other pr
 | Maximum File Age | | | The maximum age, in seconds, that a file must be in order to be pulled; any file older than this amount of time (according to last modification date) will be ignored. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
 | <b>Minimum File Size</b> | 0 | | The minimum size, in bytes, that a file must be in order to be pulled. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
 | Maximum File Size | | | The maximum size, in bytes, that a file must be in order to be pulled. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| Http Timeout | | | The duration. in seconds, to wait before an http connection times out. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
 
 ### Dynamic Properties:
 
