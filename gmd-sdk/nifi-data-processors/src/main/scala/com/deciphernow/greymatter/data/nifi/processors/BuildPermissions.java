@@ -1,5 +1,10 @@
 package com.deciphernow.greymatter.data.nifi.processors;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.annotation.behavior.ReadsAttribute;
@@ -19,16 +24,12 @@ import org.apache.nifi.logging.ComponentLog;
 import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.processor.util.StandardValidators;
 
-import org.json.JSONObject;
-import org.json.JSONArray;
+//import com.google.gson.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.LinkedHashMap;
-import java.util.Map;
+//import org.json.JSONObject;
+//import org.json.JSONArray;
+
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Tags({"gmdata"})
@@ -150,13 +151,21 @@ public class BuildPermissions extends AbstractProcessor {
         }
 
         // start up permissions
-        PermissionsJson permissionJson = new PermissionsJson(logger);
+        PermissionsJson permissionJson = new PermissionsJson();
 
         String resourceProp = context.getProperty(ResourcesProperty).evaluateAttributeExpressions(flowFile).getValue();
+        Resources resources = new Resources();
         if (resourceProp != null){
-            JSONObject resourcesJson = new JSONObject(resourceProp);
-            permissionJson = new PermissionsJson(logger, resourcesJson);
+            try {
+                resources = new Resources(resourceProp);
+                logger.debug("The parsed resource: "+ resources);
+            } catch (JsonProcessingException e) {
+                logger.warn("The given resource property: "+resourceProp);
+                logger.error(e.toString());
+                throw new ProcessException("ResourcesProperty Json not parsable. Check formatting");
+            }
         }
+        PermissionsWork permissionsWorker = new PermissionsWork(logger, resources, permissionJson);
 
         // Get all of the things needed to do work.
         // For reference the basic 3 things in any flowfile are path, filename, and uuid
@@ -174,7 +183,7 @@ public class BuildPermissions extends AbstractProcessor {
             // Could have the leading dash or 'd' for directory or not
             switch (filePermissions.length()) {
                 case 9:
-                    logger.debug("file permissions is correct at 9");
+                    logger.debug("file permissions length is correct at 9");
                     break;
                 case 10:
                     if (filePermissions.startsWith("-") | filePermissions.startsWith("d") | filePermissions.startsWith("s")) {
@@ -196,7 +205,7 @@ public class BuildPermissions extends AbstractProcessor {
             if (owner == null) {
                 owner = flowFile.getAttribute(FILE_OWNER);
             }
-            permissionJson.addPermissions(permission, owner);
+            permissionsWorker.addPermissions(permission, owner);
 
             // Next is group
             permission = filePermissions.substring(3, 6);
@@ -204,7 +213,7 @@ public class BuildPermissions extends AbstractProcessor {
             if (group == null) {
                 group = flowFile.getAttribute(FILE_GROUP);
             }
-            permissionJson.addPermissions(permission, group);
+            permissionsWorker.addPermissions(permission, group);
 
             // Next is others
             permission = filePermissions.substring(6, 9);
@@ -212,7 +221,7 @@ public class BuildPermissions extends AbstractProcessor {
             if (otherStr == null) {
                 otherStr = "group/_everyone";
             }
-            permissionJson.addPermissions(permission, otherStr);
+            permissionsWorker.addPermissions(permission, otherStr);
 
             logger.debug("Properties used: group: "+ group + " owner: " + owner + " File permissions: " + filePermissions + " Other string: " + otherStr);
         } catch (Exception e) {
@@ -226,11 +235,17 @@ public class BuildPermissions extends AbstractProcessor {
             session.transfer(flowFile, FAILURE);
         }        
 
-        logger.debug("permissionJson: " + permissionJson.getPermissionJson());
+        logger.debug("permissionJson: " + permissionsWorker.getPermissionsJson());
         logger.debug("Flowfile before: " + flowFile.getAttributes());
 
+        String returnJson = null;
+        try{
+            returnJson = permissionsWorker.getPermissionsJsonString();
+        } catch (JsonProcessingException e) {
+            logger.error(e.toString());
+        }
 
-        session.putAttribute(flowFile, PERMISSION, permissionJson.getPermissionJson().toString());
+        session.putAttribute(flowFile, PERMISSION, returnJson);
         session.removeAttribute(flowFile, FILE_OWNER);
         session.removeAttribute(flowFile, FILE_GROUP);
         session.removeAttribute(flowFile, FILE_PERMISSIONS);
@@ -240,33 +255,185 @@ public class BuildPermissions extends AbstractProcessor {
     }
 }
 
+
+class Resources {
+    private List<Resource> resources;
+
+    public Resources(String json) throws JsonProcessingException {
+        resources = new ArrayList<Resource>();
+        System.out.println("Got: "+json);
+        this.parse(json);
+    }
+
+    public Resources(){
+        resources = new ArrayList<Resource>();
+    }
+
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
+    }
+
+    public String getValue(String name){
+        for (Resource r : resources){
+            if (name.equals(r.getName())) {
+                return r.getValue();
+            }
+        }
+        return null;
+    }
+
+    private void parse(String json) throws JsonProcessingException {
+        JsonFactory factory = new JsonFactory();
+
+        ObjectMapper mapper = new ObjectMapper(factory);
+        JsonNode rootNode = mapper.readTree(json);
+
+        Iterator<Map.Entry<String,JsonNode>> fieldsIterator = rootNode.fields();
+        while (fieldsIterator.hasNext()) {
+            Map.Entry<String,JsonNode> field = fieldsIterator.next();
+            Resource resource = new Resource(field.getKey(), field.getValue().textValue());
+
+            this.resources.add(resource);
+        }
+    }
+}
+
+class Resource {
+    private String name;
+    private String value;
+
+    public Resource(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+}
+
+class Allow{
+    // Don't allow duplicates, use hashset
+    private HashSet<String> allow;
+
+    Allow(){
+        allow = new HashSet<String>();
+    }
+
+    public void add_allow(String name){
+        allow.add(name);
+    }
+
+    public HashSet<String> getAllow() {
+        return allow;
+    }
+
+    public void setAllow(HashSet<String> allow) {
+        this.allow = allow;
+    }
+}
+
+
 /**
- * Class to contain and do the work to make the permission structure that will be added to the flowfile.
+ * Class to contain the permission structure that will be added to the flowfile.
+ * This is needed for Jackson to properly serialize a json file.
  */
 class PermissionsJson {
-    private JSONObject permissionJson;
-    private ComponentLog logger;
-    private JSONObject resources;
+    private Allow create;
+    private Allow read;
+    private Allow update;
+    private Allow delete;
 
-    public PermissionsJson(final ComponentLog logger) {
-        permissionJson = createJSON();
-        this.logger = logger;
-        resources= null;
+    public PermissionsJson() {
+        this.create = new Allow();
+        this.read = new Allow();
+        this.update = new Allow();
+        this.delete = new Allow();
     }
 
-    public PermissionsJson(final ComponentLog logger, JSONObject resource){
-        permissionJson = createJSON();
-        this.logger = logger;
-        resources = resource;
+    public Allow getCreate() {
+        return create;
     }
 
-    /**
-     * Get the permissions object as a json
-     *
-     * @return the permissions json
-     */
-    public JSONObject getPermissionJson() {
-        return permissionJson;
+    public Allow getRead() {
+        return read;
+    }
+
+    public Allow getUpdate() {
+        return update;
+    }
+
+    public Allow getDelete() {
+        return delete;
+    }
+
+    public void setCreate(Allow create) {
+        this.create = create;
+    }
+
+    public void setRead(Allow read) {
+        this.read = read;
+    }
+
+    public void setUpdate(Allow update) {
+        this.update = update;
+    }
+
+    public void setDelete(Allow delete) {
+        this.delete = delete;
+    }
+    public void updateCreate(String name) {
+        this.create.add_allow(name);
+    }
+
+    public void updateRead(String name) {
+        this.read.add_allow(name);
+    }
+
+    public void updateUpdate(String name) {
+        this.update.add_allow(name);
+    }
+
+    public void updateDelete(String name) {
+        this.delete.add_allow(name);
+    }
+}
+
+class PermissionsWork{
+    private final Resources resources;
+    private final ComponentLog logger;
+    private PermissionsJson permissionsJson;
+
+    public PermissionsWork(ComponentLog logger, Resources resources, PermissionsJson permissionsJson) {
+        this.logger = logger;
+        this.resources = resources;
+        this.permissionsJson = permissionsJson;
+    }
+
+    public PermissionsJson getPermissionsJson() {
+        return permissionsJson;
+    }
+
+    public String getPermissionsJsonString() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        return mapper.writeValueAsString(permissionsJson);
     }
 
     /**
@@ -276,29 +443,24 @@ class PermissionsJson {
      * @param allowStr - The string to allow for the given permission ex 'group/_everyone'
      */
     protected void addPermissions(String permission, String allowStr){
-        logger.debug("Permission: " + permission + " allowStr: " + allowStr);
-
         // Validation
         allowStr = allowStr.trim();
         if (allowStr.length() == 0) {
-            logger.error("no value provided for allow string for user/group/other when adding permissions");
             return;
         }
         if (permission.length() != 3) {
-            logger.error("permission string given (" + permission + ") is an incorrect length when adding permissions for " + allowStr + " 3 characters given for permission");
             return;
         }
         Pattern pattern = Pattern.compile("^[r-][w-][x-]$");
         if (!pattern.matcher(permission).matches()) {
-            logger.error("permission string give (" + permission + ") doesn't conform to expected format ^[r-][w-][x-]$");
             return;
         }
 
         // Handle resource mapping
         try {
-            String mappedValue = resources.getString(allowStr);
+            String mappedValue = resources.getValue(allowStr);
             if (mappedValue.length() > 0) {
-                logger.debug("Found " + mappedValue + " in resources for " + allowStr + ". Updating with replacement value");
+                logger.warn("Found " + mappedValue + " in resources for " + allowStr + ". Updating with replacement value");
                 allowStr = mappedValue;
             }
         } catch (Exception e) {
@@ -310,61 +472,17 @@ class PermissionsJson {
         if (permission.contains("r") ) {
             logger.debug("found read");
 
-            // don't allow double additions
-            JSONObject read = (JSONObject) permissionJson.get("read");
-            if (!read.get("allow").toString().contains(allowStr)) {
-                read.append("allow", allowStr);
-            }
+            permissionsJson.updateRead(allowStr);
         }
         if (permission.contains("w") ) {
             logger.debug("found write");
 
-            JSONObject create = (JSONObject) permissionJson.get("create");
-            if (!create.get("allow").toString().contains(allowStr)) {
-                create.append("allow", allowStr);
-            }
-            JSONObject update = (JSONObject) permissionJson.get("update");
-            if (!update.get("allow").toString().contains(allowStr)) {
-                update.append("allow", allowStr);
-            }
-            JSONObject delete = (JSONObject) permissionJson.get("delete");
-            if (!delete.get("allow").toString().contains(allowStr)) {
-                delete.append("allow", allowStr);
-            }
+            permissionsJson.updateCreate(allowStr);
+            permissionsJson.updateUpdate(allowStr);
+            permissionsJson.updateDelete(allowStr);
         }
         if (permission.contains("x") ) {
             logger.debug("found execute, but doing nothing to the permissions.");
         }
-    }
-    /**
-     * Create the initial json structure for the permissions field.
-     *
-     * @return JSONObject that contains the basic permissions structure
-     */
-    private JSONObject createJSON(){
-        //maps each label to an empty JSONArray
-        Map<String, JSONObject> arrays = new LinkedHashMap<String, JSONObject>();
-        JSONObject permissionJson = new JSONObject();
-
-        for (properties prop : properties.values()) {
-            JSONObject allowjson = new JSONObject();
-            allowjson.put("allow", new JSONArray());
-            arrays.put(prop.toString(), allowjson);
-        }
-        //for each label array in arrays, add the JSONArray to JSONObject send
-        for (Map.Entry<String, JSONObject> c : arrays.entrySet()) {
-            permissionJson.put(c.getKey(), c.getValue());
-        }
-        return permissionJson;
-    }
-
-    /**
-     * Properties of the permissions structure.
-     */
-    protected enum properties {
-        create,
-        read,
-        update,
-        delete
     }
 }

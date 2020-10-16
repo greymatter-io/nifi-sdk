@@ -4,21 +4,19 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.*;
 import org.apache.nifi.documentation.init.NopComponentLog;
 import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.util.TestRunner;
 import org.apache.nifi.util.TestRunners;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.LinkedHashMap;
 
 public class BuildPermissionsTest {
     private TestRunner testRunner;
@@ -210,9 +208,9 @@ public class BuildPermissionsTest {
         mapped.put("file.permissions", filePermissions);
 
         // resource mappings
-        JSONObject resources = new JSONObject();
-        resources.put("decipherer", "user/decipherer");
-        resources.put("staff", "group/staff");
+        JsonObject resources = new JsonObject();
+        resources.add("decipherer", new JsonPrimitive("user/decipherer"));
+        resources.add("staff", new JsonPrimitive("group/staff"));
 
         String testOwner = "user/cn=daveborncamp,o=whatever,c=us" ;
         // start the tester and send the flowfile
@@ -333,11 +331,14 @@ public class BuildPermissionsTest {
 
     @Test
     public void testResourcesProperty(){
-        // make an empty flowfile
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        JSONObject resources = new JSONObject();
         String newUser = "user/cn=daveborncamp,o=whatever,c=us";
-        resources.put("dborncamp", newUser);
+        String name = "dborncamp";
+        // The json will be given as an escaped string from the UI
+        String testResource = "{\""+name+"\": \""+newUser+"\"}";
+
         // Set up the flowfile input
         String fileOwner = "dborncamp";
         String fileGroup = "staff";
@@ -352,7 +353,7 @@ public class BuildPermissionsTest {
 
         // start the tester and send the flowfile
         testRunner.enqueue(content, mapped);
-        testRunner.setProperty(BuildPermissions.ResourcesProperty, resources.toString());
+        testRunner.setProperty(BuildPermissions.ResourcesProperty, testResource);
 
         testRunner.run(1);
         testRunner.assertQueueEmpty();
@@ -365,10 +366,23 @@ public class BuildPermissionsTest {
         FlowFile flowFile = (FlowFile) result.get(0);
         System.out.println("testing the output: " + flowFile.getAttributes());
         assertEquals("There should be 4 things in the flowfile", flowFile.getAttributes().size(), 4);
+
+        JsonObject jsonObject = new JsonParser().parse(flowFile.getAttribute("permission")).getAsJsonObject();
+        JsonArray createAllow = jsonObject.getAsJsonObject("create").getAsJsonArray("allow");
+
+        JsonPrimitive tOwn = new JsonPrimitive(newUser);
+        assertTrue(createAllow.contains(tOwn));
     }
 
     @Test
     public void testAllPropertiesEmptyFlow() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        String newUser = "user/cn=daveborncamp,o=whatever,c=us";
+        String name = "testme";
+        String testResource = "{\""+name+"\": \""+newUser+"\"}";
+
         // make an empty flowfile
         final InputStream content = new ByteArrayInputStream("".getBytes());
         Map<String, String> mapped = new LinkedHashMap<String, String>();
@@ -378,17 +392,13 @@ public class BuildPermissionsTest {
         String testOwner = "testme";
         String testOthers = "group/people";
 
-        JSONObject resources = new JSONObject();
-        String newUser = "user/cn=daveborncamp,o=whatever,c=us";
-        resources.put("testme", newUser);
-
         // start the tester and send the flowfile
         testRunner.enqueue(content, mapped);
         testRunner.setProperty(BuildPermissions.FilePermissionsProperty, testFilePermissions);
         testRunner.setProperty(BuildPermissions.FileGroupProperty, testGrp);
         testRunner.setProperty(BuildPermissions.FileOwnerProperty, testOwner);
         testRunner.setProperty(BuildPermissions.FileOtherProperty, testOthers);
-        testRunner.setProperty(BuildPermissions.ResourcesProperty, resources.toString());
+        testRunner.setProperty(BuildPermissions.ResourcesProperty, testResource);
 
         testRunner.run(1);
         testRunner.assertQueueEmpty();
@@ -408,12 +418,15 @@ public class BuildPermissionsTest {
 
         // test for group
         JsonPrimitive tGroup = new JsonPrimitive(testGrp);
-        System.out.println(readAllow);
 
         assertTrue(readAllow.contains(tGroup));
 
         // test for owner, this should be changed with the resources!
         JsonPrimitive tOwn = new JsonPrimitive(newUser);
+        System.out.println("readAllow");
+        System.out.println(readAllow);
+        System.out.println(tOwn);
+
         assertTrue(readAllow.contains(tOwn));
 
         // test for owner
@@ -423,61 +436,124 @@ public class BuildPermissionsTest {
     }
 
     @Test
-    public void testPermissionJson(){
-        NopComponentLog log = new NopComponentLog();
-        PermissionsJson permissions = new PermissionsJson(log);
-
-        // test an incomplete permissions string, nothing should be added
-        String incomplete = "r";
-        String user = "dborncamp";
-        permissions.addPermissions(incomplete, user);
-        JSONObject jsonObject = permissions.getPermissionJson();
-        JSONArray readAllow = jsonObject.getJSONObject("read").getJSONArray("allow");
-        assertEquals(readAllow.length(), 0);
-
-        String permission = "r--";
-
-        permissions.addPermissions(permission, user);
-        jsonObject = permissions.getPermissionJson();
-        System.out.println(jsonObject.toString());
-
-        // make sure that it made it
-        String result = (String) jsonObject.getJSONObject("read").getJSONArray("allow").get(0);
-        System.out.println(result);
-        assertEquals(user, result);
-
-        // make sure it didn't go anywhere else
-        String permissionStr = "{\"read\":{\"allow\":[\""+user+"\"]},\"create\":{\"allow\":[]},\"update\":{\"allow\":[]},\"delete\":{\"allow\":[]}}";
-        assertEquals(jsonObject.toString(), permissionStr);
-
-        // make sure things are not double added
-        permission = "rwx";
-        user = "dborncamp";
-
-        permissions.addPermissions(permission, user);
-        jsonObject = permissions.getPermissionJson();
-        System.out.println(jsonObject.toString());
-
-        permissionStr = "{\"read\":{\"allow\":[\""+user+"\"]},\"create\":{\"allow\":[\""+user+"\"]},\"update\":{\"allow\":[\""+user+"\"]},\"delete\":{\"allow\":[\""+user+"\"]}}";
-        assertEquals(jsonObject.toString(), permissionStr);
-
-        // try resources
-        JSONObject resources = new JSONObject();
-        String newUser = "user/cn=daveborncamp,o=whatever,c=us";
-        resources.put("dborncamp", newUser);
-        String bad = "else";
-        resources.put("something", bad);
-        System.out.println(resources.toString());
-
-        permissions = new PermissionsJson(log, resources);
-        permissions.addPermissions(permission, user);
-        jsonObject = permissions.getPermissionJson();
-        System.out.println(jsonObject.toString());
-
-        result = (String) jsonObject.getJSONObject("read").getJSONArray("allow").get(0);
-        assertEquals(result, newUser);
-
-        // "else" should not be in there
-        assertFalse(jsonObject.toString().contains(bad));
+    public void basicPermissions() {
+        ObjectMapper mapper = new ObjectMapper();
+        PermissionsJson permissions = new PermissionsJson();
+        permissions.updateCreate("dave");
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(permissions);
+        } catch ( JsonProcessingException e){
+            e.printStackTrace();
+            fail();
+        }
+        String goodResult = "{\"create\":{\"allow\":[\"dave\"]},\"read\":{\"allow\":[]},\"update\":{\"allow\":[]},\"delete\":{\"allow\":[]}}";
+        System.out.println(json);
+        assertTrue(goodResult.equals(json));
     }
+
+    @Test
+    public void testAllow() {
+        Allow a = new Allow();
+        a.add_allow("Hello");
+
+        assertEquals(1, a.getAllow().size());
+
+        a.add_allow("There");
+        assertEquals(2, a.getAllow().size());
+
+        a.setAllow(new HashSet<String>());
+        assertEquals(0, a.getAllow().size());
+    }
+
+    @Test
+    public void testResource() {
+        Resource resource = new Resource("Hi", "There");
+        assertEquals("Hi", resource.getName());
+        assertEquals("There", resource.getValue());
+        resource.setName("foo");
+        resource.setValue("bar");
+        assertEquals("foo", resource.getName());
+        assertEquals("bar", resource.getValue());
+    }
+
+    @Test
+    public void testResources() {
+        String value = "\"user/cn=daveborncamp,o=whatever,c=us\", \"engineers\": \"group/decipher/engineers\"";
+        String userValue = "user/cn=daveborncamp,o=whatever,c=us";
+        String name = "daveborncamp";
+        String testResource = "{\""+name+"\": "+value+"}";
+        Resources resources = null;
+        try {
+            resources = new Resources(testResource);
+        } catch (JsonProcessingException e){
+            e.printStackTrace();
+            fail();
+        }
+
+        assert resources != null;
+        assertEquals(2, resources.getResources().size());
+
+        assertEquals(userValue, resources.getValue(name));
+        assertNull(resources.getValue("wrong"));
+    }
+
+//    @Test
+//    public void testPermissionJson(){
+//        NopComponentLog log = new NopComponentLog();
+//        PermissionsJson permissions = new PermissionsJson(log);
+//
+//        // test an incomplete permissions string, nothing should be added
+//        String incomplete = "r";
+//        String user = "dborncamp";
+//        permissions.addPermissions(incomplete, user);
+//        JSONObject jsonObject = permissions.getPermissionJson();
+//        JSONArray readAllow = jsonObject.getJSONObject("read").getJSONArray("allow");
+//        assertEquals(readAllow.length(), 0);
+//
+//        String permission = "r--";
+//
+//        permissions.addPermissions(permission, user);
+//        jsonObject = permissions.getPermissionJson();
+//        System.out.println(jsonObject.toString());
+//
+//        // make sure that it made it
+//        String result = (String) jsonObject.getJSONObject("read").getJSONArray("allow").get(0);
+//        System.out.println(result);
+//        assertEquals(user, result);
+//
+//        // make sure it didn't go anywhere else
+//        String permissionStr = "{\"read\":{\"allow\":[\""+user+"\"]},\"create\":{\"allow\":[]},\"update\":{\"allow\":[]},\"delete\":{\"allow\":[]}}";
+//        assertEquals(jsonObject.toString(), permissionStr);
+//
+//        // make sure things are not double added
+//        permission = "rwx";
+//        user = "dborncamp";
+//
+//        permissions.addPermissions(permission, user);
+//        jsonObject = permissions.getPermissionJson();
+//        System.out.println(jsonObject.toString());
+//
+//        permissionStr = "{\"read\":{\"allow\":[\""+user+"\"]},\"create\":{\"allow\":[\""+user+"\"]},\"update\":{\"allow\":[\""+user+"\"]},\"delete\":{\"allow\":[\""+user+"\"]}}";
+//        assertEquals(jsonObject.toString(), permissionStr);
+//
+//        // try resources
+//        JSONObject resources = new JSONObject();
+//        String newUser = "user/cn=daveborncamp,o=whatever,c=us";
+//        resources.put("dborncamp", newUser);
+//        String bad = "else";
+//        resources.put("something", bad);
+//        System.out.println(resources.toString());
+//
+//        permissions = new PermissionsJson(log, resources);
+//        permissions.addPermissions(permission, user);
+//        jsonObject = permissions.getPermissionJson();
+//        System.out.println(jsonObject.toString());
+//
+//        result = (String) jsonObject.getJSONObject("read").getJSONArray("allow").get(0);
+//        assertEquals(result, newUser);
+//
+//        // "else" should not be in there
+//        assertFalse(jsonObject.toString().contains(bad));
+//    }
 }

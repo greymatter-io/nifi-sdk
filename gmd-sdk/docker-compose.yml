@@ -2,9 +2,9 @@ version: "2"
 services:
 
   nifi:
-    image: apache/nifi:1.11.4
+    image: apache/nifi:1.12.1
     environment:
-      - NIFI_VERSION=1.11.4
+      - NIFI_VERSION=1.12.1
     ports:
       - 9443:8080
     networks:

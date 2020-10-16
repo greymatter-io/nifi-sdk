@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>org.apache.nifi</groupId>
 		<artifactId>nifi-nar-bundles</artifactId>
-		<version>1.11.4</version>
+		<version>1.12.1</version>
 	</parent>
 	<groupId>io.greymatter</groupId>
 	<artifactId>nifi-data</artifactId>
@@ -32,14 +32,14 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<scala.version>2.12.10</scala.version>
 		<scala.major.version>2.12</scala.major.version>
-		<commons.io.version>1.3.2</commons.io.version>
+		<commons.io.version>2.8.0</commons.io.version>
 		<slf4j.version>1.7.13</slf4j.version>
 		<scalatest.version>3.0.5</scalatest.version>
 		<scalacheck.version>1.14.0</scalacheck.version>
 		<scalaz-core.version>7.3.0-M31</scalaz-core.version>
 		<refined-scalaz.version>0.9.10</refined-scalaz.version>
 		<argonaut.version>6.2.2</argonaut.version>
-		<nifi.version>1.11.4</nifi.version>
+		<nifi.version>1.12.1</nifi.version>
 	</properties>
 	<modules>
 		<module>nifi-data-processors</module>
