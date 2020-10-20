@@ -19,10 +19,11 @@
     <parent>
         <groupId>io.greymatter</groupId>
         <artifactId>nifi-data</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.2</version>
     </parent>
 
     <artifactId>nifi-data-processors</artifactId>
+    <version>${parent.version}</version>
     <packaging>jar</packaging>
     <properties>
         <http4s.version>0.21.3</http4s.version>

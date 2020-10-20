@@ -1,6 +1,3 @@
-/*
-Adapted from https://github.com/apache/nifi/blob/rel/nifi-1.10.0/nifi-nar-bundles/nifi-standard-bundle/nifi-standard-processors/src/main/java/org/apache/nifi/processors/standard/InvokeHTTP.java
- */
 package com.deciphernow.greymatter.data.nifi.processors;
 
 import java.io.IOException;
@@ -10,6 +7,13 @@ import java.io.UnsupportedEncodingException;
 import java.io.OutputStream;
 
 import java.security.Principal;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -40,7 +44,6 @@ import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.ssl.SSLContextService;
 import org.apache.nifi.ssl.SSLContextService.ClientAuth;
 import org.apache.nifi.stream.io.StreamUtils;
-import org.json.JSONObject;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -70,7 +73,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import org.apache.http.impl.EnglishReasonPhraseCatalog;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -110,7 +112,7 @@ public final class GetPolicies extends AbstractProcessor {
     public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     // Set of HTTP header names explicitly excluded from requests.
-    private static final Map<String, String> excludedHeaders = new HashMap<String, String>();
+    private static final Map<String, String> excludedHeaders = new HashMap<>();
 
     // properties
     public static final PropertyDescriptor PROP_BASE_URL = new PropertyDescriptor.Builder()
@@ -447,13 +449,24 @@ public final class GetPolicies extends AbstractProcessor {
 
                             String responseString = responseBody.string();
                             logger.debug("Body: " + responseString);
-                            JSONObject responseJson = new JSONObject(responseString);
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            AnyJson responseJson = null;
+                            try {
+                                responseJson = objectMapper.readValue(responseString, AnyJson.class);
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                                logger.error("Could not get the response string");
+                                logger.error("");
+                            }
+
+                            //JSONObject responseJson = new JSONObject(responseString);
                             logger.debug("response JSON from Data Policies server: " + responseJson);
 
-                            session.putAttribute(requestFlowFile, "gmdata.objectpolicy", responseJson.getJSONObject("objectpolicy").toString());
-                            session.putAttribute(requestFlowFile, "gmdata.lisp", responseJson.getString("lisp"));
-                            session.putAttribute(requestFlowFile, "gmdata.security", responseJson.getJSONObject("security").toString());
-                            session.putAttribute(requestFlowFile, "gmdata.originalobjectpolicy", quote(responseJson.getJSONObject("originalobjectpolicy").toString()));
+                            assert responseJson != null;
+                            session.putAttribute(requestFlowFile, "gmdata.objectpolicy", responseJson.getOtherFields().get("objectpolicy").toString());
+                            session.putAttribute(requestFlowFile, "gmdata.lisp", responseJson.getOtherFields().get("lisp").toString());
+                            session.putAttribute(requestFlowFile, "gmdata.security", responseJson.getOtherFields().get("security").toString());
+                            session.putAttribute(requestFlowFile, "gmdata.originalobjectpolicy", quote(responseJson.getOtherFields().get("originalobjectpolicy").toString()));
 
                             logger.debug("set attributes");
                         }
@@ -559,7 +572,7 @@ public final class GetPolicies extends AbstractProcessor {
                 default:
                     if (c < ' ') {
                         t = "000" + Integer.toHexString(c);
-                        sb.append("\\u" + t.substring(t.length() - 4));
+                        sb.append("\\u").append(t.substring(t.length() - 4));
                     } else {
                         sb.append(c);
                     }
@@ -570,24 +583,32 @@ public final class GetPolicies extends AbstractProcessor {
     }
 
 
-    private Request configureRequest(final ProcessContext context, final FlowFile requestFlowFile, URL url) {
+    private Request configureRequest(final ProcessContext context, final FlowFile requestFlowFile, URL url) throws JsonProcessingException {
         final ComponentLog logger = getLogger();
         Request.Builder requestBuilder = new Request.Builder();
         logger.debug("configuring request");
 
         requestBuilder = requestBuilder.url(url);
 
-        JSONObject requestJson = new JSONObject();
-        requestJson.put("acm", new JSONObject(requestFlowFile.getAttribute("acm")));
-        requestJson.put("permission", new JSONObject(requestFlowFile.getAttribute("permission")));
-        logger.debug("Got the permission");
+        JsonFactory factory = new JsonFactory();
+        ObjectMapper objectMapper = new ObjectMapper(factory);
+
+        AnyJson acm = objectMapper.readValue(requestFlowFile.getAttribute("acm"), AnyJson.class);
+        AnyJson permissions = objectMapper.readValue(requestFlowFile.getAttribute("permission"), AnyJson.class);
+
+        AcmAndPermissions requestJson = new AcmAndPermissions(acm, permissions);
+
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        String json = objectMapper.writeValueAsString(requestJson);
+
+        logger.debug("Got the ACM and permissions: " + json);
 
         MediaType media = MediaType.parse(DEFAULT_CONTENT_TYPE);
-        logger.debug("Submitting to Data Policy server - Content type: "+ media + "  The json to submit: "+requestJson.toString());
+        logger.debug("Submitting to Data Policy server - Content type: "+ media + "  The json to submit: "+json);
 
         RequestBody requestBody = null;
         try {
-            requestBody = RequestBody.create(media, requestJson.toString().getBytes("UTF-8"));
+            requestBody = RequestBody.create(media, json.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -726,6 +747,62 @@ public final class GetPolicies extends AbstractProcessor {
     }
 }
 
+class AcmAndPermissions{
+    AnyJson acm;
+    AnyJson permissions;
+
+    public AcmAndPermissions() {
+        this.acm = new AnyJson();
+        this.permissions = new AnyJson();
+    }
+
+    public AcmAndPermissions(AnyJson acm, AnyJson permissions) {
+        this.acm = acm;
+        this.permissions = permissions;
+    }
+
+    public AnyJson getAcm() {
+        return acm;
+    }
+
+    public void setAcm(AnyJson acm) {
+        this.acm = acm;
+    }
+
+    public AnyJson getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(AnyJson permissions) {
+        this.permissions = permissions;
+    }
+}
+
+class AnyJson {
+    Map<String, Object> unknownFields;
+
+    AnyJson() {
+        this.unknownFields = new HashMap<>();
+    }
+
+    AnyJson(String str, String str1) {
+        this.unknownFields = new HashMap<>();
+        unknownFields.put(str, str1);
+    }
+
+    // Capture all other fields that Jackson do not match other members
+    @JsonAnyGetter
+    public Map<String, Object> getOtherFields() {
+        return unknownFields;
+    }
+
+    @JsonAnySetter
+    public void setOtherField(String name, Object value) {
+        unknownFields.put(name, value);
+    }
+}
+
+
 // Lifted from: https://github.com/apache/nifi/blob/rel/nifi-1.10.0/nifi-nar-bundles/nifi-standard-bundle/nifi-standard-processors/src/main/java/org/apache/nifi/processors/standard/util/SoftLimitBoundedByteArrayOutputStream.java
 class SoftLimitBoundedByteArrayOutputStream extends OutputStream {
     /*
@@ -735,7 +812,7 @@ class SoftLimitBoundedByteArrayOutputStream extends OutputStream {
      */
 
     private final byte[] buffer;
-    private int limit;
+    private final int limit;
     private int count;
 
     public SoftLimitBoundedByteArrayOutputStream(int capacity) {
@@ -752,7 +829,7 @@ class SoftLimitBoundedByteArrayOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(int b) throws IOException {
+    public void write(int b) {
         if (count >= limit) {
             return;
         }
@@ -760,7 +837,7 @@ class SoftLimitBoundedByteArrayOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(byte b[], int off, int len) throws IOException {
+    public void write(byte[] b, int off, int len) throws IndexOutOfBoundsException {
         if ((off < 0) || (off > b.length) || (len < 0) || ((off + len) > b.length)
                 || ((off + len) < 0)) {
             throw new IndexOutOfBoundsException();

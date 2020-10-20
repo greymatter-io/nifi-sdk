@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.*;
-import org.apache.nifi.documentation.init.NopComponentLog;
 import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.util.TestRunner;
 import org.apache.nifi.util.TestRunners;
@@ -497,63 +496,4 @@ public class BuildPermissionsTest {
         assertEquals(userValue, resources.getValue(name));
         assertNull(resources.getValue("wrong"));
     }
-
-//    @Test
-//    public void testPermissionJson(){
-//        NopComponentLog log = new NopComponentLog();
-//        PermissionsJson permissions = new PermissionsJson(log);
-//
-//        // test an incomplete permissions string, nothing should be added
-//        String incomplete = "r";
-//        String user = "dborncamp";
-//        permissions.addPermissions(incomplete, user);
-//        JSONObject jsonObject = permissions.getPermissionJson();
-//        JSONArray readAllow = jsonObject.getJSONObject("read").getJSONArray("allow");
-//        assertEquals(readAllow.length(), 0);
-//
-//        String permission = "r--";
-//
-//        permissions.addPermissions(permission, user);
-//        jsonObject = permissions.getPermissionJson();
-//        System.out.println(jsonObject.toString());
-//
-//        // make sure that it made it
-//        String result = (String) jsonObject.getJSONObject("read").getJSONArray("allow").get(0);
-//        System.out.println(result);
-//        assertEquals(user, result);
-//
-//        // make sure it didn't go anywhere else
-//        String permissionStr = "{\"read\":{\"allow\":[\""+user+"\"]},\"create\":{\"allow\":[]},\"update\":{\"allow\":[]},\"delete\":{\"allow\":[]}}";
-//        assertEquals(jsonObject.toString(), permissionStr);
-//
-//        // make sure things are not double added
-//        permission = "rwx";
-//        user = "dborncamp";
-//
-//        permissions.addPermissions(permission, user);
-//        jsonObject = permissions.getPermissionJson();
-//        System.out.println(jsonObject.toString());
-//
-//        permissionStr = "{\"read\":{\"allow\":[\""+user+"\"]},\"create\":{\"allow\":[\""+user+"\"]},\"update\":{\"allow\":[\""+user+"\"]},\"delete\":{\"allow\":[\""+user+"\"]}}";
-//        assertEquals(jsonObject.toString(), permissionStr);
-//
-//        // try resources
-//        JSONObject resources = new JSONObject();
-//        String newUser = "user/cn=daveborncamp,o=whatever,c=us";
-//        resources.put("dborncamp", newUser);
-//        String bad = "else";
-//        resources.put("something", bad);
-//        System.out.println(resources.toString());
-//
-//        permissions = new PermissionsJson(log, resources);
-//        permissions.addPermissions(permission, user);
-//        jsonObject = permissions.getPermissionJson();
-//        System.out.println(jsonObject.toString());
-//
-//        result = (String) jsonObject.getJSONObject("read").getJSONArray("allow").get(0);
-//        assertEquals(result, newUser);
-//
-//        // "else" should not be in there
-//        assertFalse(jsonObject.toString().contains(bad));
-//    }
 }

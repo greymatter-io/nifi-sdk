@@ -24,11 +24,6 @@ import org.apache.nifi.logging.ComponentLog;
 import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.processor.util.StandardValidators;
 
-//import com.google.gson.*;
-
-//import org.json.JSONObject;
-//import org.json.JSONArray;
-
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -261,7 +256,6 @@ class Resources {
 
     public Resources(String json) throws JsonProcessingException {
         resources = new ArrayList<Resource>();
-        System.out.println("Got: "+json);
         this.parse(json);
     }
 
@@ -460,7 +454,7 @@ class PermissionsWork{
         try {
             String mappedValue = resources.getValue(allowStr);
             if (mappedValue.length() > 0) {
-                logger.warn("Found " + mappedValue + " in resources for " + allowStr + ". Updating with replacement value");
+                logger.debug("Found " + mappedValue + " in resources for " + allowStr + ". Updating with replacement value");
                 allowStr = mappedValue;
             }
         } catch (Exception e) {
