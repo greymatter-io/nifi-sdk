@@ -1,5 +1,9 @@
 package com.deciphernow.greymatter.data.nifi.processors;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.nifi.flowfile.FlowFile;
@@ -10,7 +14,6 @@ import org.apache.nifi.util.TestRunners;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 
 public class GetPoliciesTest {
@@ -180,6 +184,79 @@ public class GetPoliciesTest {
         assertEquals("404", flowFile.getAttribute("getpolicies.status.code"));
         assertEquals("https://127.0.0.1:8081/convert/wrong/convert/addpermissions", flowFile.getAttribute("getpolicies.request.url"));
 
+    }
+
+    @Test
+    public void testAnyJson() {
+        String acm = "{\"version\": \"2.1.0\" ,\"classif\": \"U\"}";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        AnyJson mClass4 = null;
+        try {
+            mClass4 = objectMapper.readValue(acm,
+                    AnyJson.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            fail();
+        }
+        assertEquals("{classif=U, version=2.1.0}", mClass4.getOtherFields().toString());
+
+    }
+
+    @Test
+    public void testAcmAndPermissions() {
+        JsonFactory factory = new JsonFactory();
+        ObjectMapper objectMapper = new ObjectMapper(factory);
+
+        // assert equals is picky about formatting
+        String acmStr = "{\n" +
+                "  \"classif\" : \"U\",\n" +
+                "  \"version\" : \"2.1.0\"\n" +
+                "}";
+        String permissionsStr = "{\n" +
+                "  \"permission\" : {\n" +
+                "    \"create\" : {\n" +
+                "      \"allow\" : [ \"group/superuser\" ]\n" +
+                "    },\n" +
+                "    \"read\" : {\n" +
+                "      \"allow\" : [ \"group/superuser\", \"group/general_user\" ]\n" +
+                "    },\n" +
+                "    \"update\" : {\n" +
+                "      \"allow\" : [ \"group/general_user\" ]\n" +
+                "    },\n" +
+                "    \"delete\" : {\n" +
+                "      \"allow\" : [ \"group/superuser\" ]\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        AnyJson acm = null;
+        AnyJson permissions = null;
+        try {
+            acm = objectMapper.readValue(acmStr, AnyJson.class);
+            permissions = objectMapper.readValue(permissionsStr, AnyJson.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            fail();
+        }
+
+        AcmAndPermissions requestJson = new AcmAndPermissions(acm, permissions);
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        String acmJson = null;
+        String permissionsJson = null;
+        try {
+            acmJson = objectMapper.writeValueAsString(requestJson.acm);
+            permissionsJson = objectMapper.writeValueAsString(requestJson.permissions);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            fail();
+        }
+
+        // make sure we can get out what we put in through the marshaling and unmarshaling process
+//        System.out.println(acmStr);
+//        System.out.println(acmJson);
+        assertEquals(acmStr, acmJson);
+        assertEquals(permissionsStr, permissionsJson);
     }
 
 
