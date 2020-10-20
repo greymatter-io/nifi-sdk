@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.nifi.components.PropertyDescriptor;
-import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.annotation.behavior.ReadsAttribute;
 import org.apache.nifi.annotation.behavior.ReadsAttributes;
 import org.apache.nifi.annotation.behavior.WritesAttribute;
@@ -14,17 +12,25 @@ import org.apache.nifi.annotation.behavior.WritesAttributes;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.SeeAlso;
 import org.apache.nifi.annotation.documentation.Tags;
-import org.apache.nifi.processor.exception.ProcessException;
+import org.apache.nifi.components.PropertyDescriptor;
+import org.apache.nifi.expression.ExpressionLanguageScope;
+import org.apache.nifi.flowfile.FlowFile;
+import org.apache.nifi.logging.ComponentLog;
 import org.apache.nifi.processor.AbstractProcessor;
 import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.ProcessSession;
 import org.apache.nifi.processor.ProcessorInitializationContext;
 import org.apache.nifi.processor.Relationship;
-import org.apache.nifi.logging.ComponentLog;
-import org.apache.nifi.expression.ExpressionLanguageScope;
+import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.util.StandardValidators;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Tags({"gmdata"})
@@ -64,7 +70,7 @@ public class BuildPermissions extends AbstractProcessor {
 
     @Override
     protected void init(final ProcessorInitializationContext context) {
-        final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
+        final List<PropertyDescriptor> descriptors = new ArrayList<>();
         descriptors.add(FilePermissionsProperty);
         descriptors.add(FileOwnerProperty);
         descriptors.add(FileGroupProperty);
@@ -72,7 +78,7 @@ public class BuildPermissions extends AbstractProcessor {
         descriptors.add(ResourcesProperty);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
-        final Set<Relationship> relationships = new HashSet<Relationship>();
+        final Set<Relationship> relationships = new HashSet<>();
         relationships.add(SUCCESS);
         relationships.add(FAILURE);
         this.relationships = Collections.unmodifiableSet(relationships);
@@ -165,10 +171,10 @@ public class BuildPermissions extends AbstractProcessor {
         // Get all of the things needed to do work.
         // For reference the basic 3 things in any flowfile are path, filename, and uuid
         logger.debug("Input flowfile: " + flowFile.getAttributes().toString());
-        String owner = null;
-        String group = null;
-        String filePermissions = null;
-        String otherStr = null;
+        String owner;
+        String group;
+        String filePermissions;
+        String otherStr;
         try {
             filePermissions = context.getProperty(FilePermissionsProperty).evaluateAttributeExpressions(flowFile).getValue();
             if (filePermissions == null) {
@@ -189,7 +195,6 @@ public class BuildPermissions extends AbstractProcessor {
                         throw new Exception("Length of file.permissions is 10 but did not start with '-', 'd', or 's' so it is not valid");
                     }
                     break;
-
                 default:
                     throw new Exception("Value for file.permissions is an unsupported length");
             }
@@ -255,12 +260,12 @@ class Resources {
     private List<Resource> resources;
 
     public Resources(String json) throws JsonProcessingException {
-        resources = new ArrayList<Resource>();
+        resources = new ArrayList<>();
         this.parse(json);
     }
 
     public Resources(){
-        resources = new ArrayList<Resource>();
+        resources = new ArrayList<>();
     }
 
     public void setResources(List<Resource> resources) {
@@ -327,7 +332,7 @@ class Allow{
     private HashSet<String> allow;
 
     Allow(){
-        allow = new HashSet<String>();
+        allow = new HashSet<>();
     }
 
     public void add_allow(String name){
@@ -412,7 +417,7 @@ class PermissionsJson {
 class PermissionsWork{
     private final Resources resources;
     private final ComponentLog logger;
-    private PermissionsJson permissionsJson;
+    private final PermissionsJson permissionsJson;
 
     public PermissionsWork(ComponentLog logger, Resources resources, PermissionsJson permissionsJson) {
         this.logger = logger;
