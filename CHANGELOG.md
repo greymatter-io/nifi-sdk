@@ -3,6 +3,8 @@
 - Improved processors configuration of Timeouts via additional Properties
 - Retry loops in templates reduced from 5 to 2, and backpressure sizing set
 - Release 1.0.2
+- New Processors
+  - S3RequestSplit
 
 ## September
 - Enhancements to Processors
