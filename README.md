@@ -1,6 +1,6 @@
 # Grey Matter NiFi SDK
 
-This project contains custom Apache NiFi processors, groovy scripts, and sample templates for integrating with Grey Matter Data.
+This project contains custom Apache NiFi processors, groovy scripts, and sample templates for integrating NiFi with Grey Matter Data.
 
 ## Processors
 
@@ -16,7 +16,8 @@ Templates are available in the [nifi-templates](./nifi-templates) folder.
 
 - This project may be built with Maven from the gmd-sdk folder
 - The project must be built with Java 8
-- maven downloads and compiles Scala code with version 2.12
+- Maven downloads and compiles Scala code with version 2.12
+- Builds on NiFi 1.12.1
 
 
 ## Testing
