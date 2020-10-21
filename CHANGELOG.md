@@ -1,3 +1,6 @@
+## November
+- Update README.md to provide more guidance on processor usage within NiFi
+
 ## October
 - Upgraded to build on and support NiFi 1.12.1
 - Improved processors configuration of Timeouts via additional Properties
