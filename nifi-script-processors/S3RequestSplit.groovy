@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets
 // S3 Request Split
 //
 // This is an auxiliary script that can be used as part of a NiFi flow to 
-// break up requests for larger files fromn S3 into smaller segments.  
+// break up requests for larger files from S3 into smaller segments.  
 //
 // Documentation for usage with ExecuteGroovyScript processor available at
 // https://github.com/greymatter-io/nifi-sdk/blob/master/doc/S3RequestSplit.md
@@ -197,10 +197,15 @@ try
     session.remove(ff)
   }
 } catch (e) {
-  // Log to console
-  log.error("Error splitting s3 requests: ${aS3Bucket}${aFilename}", e)
-  // Set attribute with error
-  ff = session.putAttribute(ff, 's3requestsplit.error.message', e.toString())
-  // Transfer
-  session.transfer(ff, REL_FAILURE)
+  try {
+    // Log to console
+    log.error("Error splitting s3 requests: ${aS3Bucket}${aFilename}", e)
+    // Set attribute with error
+    ff = session.putAttribute(ff, 's3requestsplit.error.message', e.toString())
+    // Transfer
+    session.transfer(ff, REL_FAILURE)
+  } catch (e2) {
+    log.error("Error in S3RequestSplit")
+    log.error(e2);
+  }
 }

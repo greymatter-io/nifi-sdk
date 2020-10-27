@@ -212,12 +212,16 @@ try
 }
 catch (e) 
 {
-  // Log to console
-  log.error("Error during join of file parts: ${fDir}${fPath}${fName}", e)
-  // Set attribute with error
-  ff = session.putAttribute(ff, 'joinfiles.error.message', e.toString())
-  // Transfer
-  session.transfer(ff, REL_FAILURE)
+  try {
+    // Log to console
+    log.error("Error during join of file parts: ${fDir}${fPath}${fName}", e)
+    // Set attribute with error
+    ff = session.putAttribute(ff, 'joinfiles.error.message', e.toString())
+    // Transfer
+    session.transfer(ff, REL_FAILURE)
+  } catch(e2) {
+    log.error("Error in JoinFiles")    
+  }
 }
 finally
 {

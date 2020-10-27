@@ -59,13 +59,15 @@ try {
   session.transfer(ff, REL_SUCCESS)
 
 } catch(e) {
-
-  // Log to console
-  log.error("Error during deletion of split file", e)
-
-  // Set attribute with error
-  ff = session.putAttribute(ff, 'removefile.error.message', e.toString())
- 
-  // Transfer
-  session.transfer(ff, REL_FAILURE)
+  try {
+    // Log to console
+    log.error("Error during deletion of split file", e)
+    // Set attribute with error
+    ff = session.putAttribute(ff, 'removefile.error.message', e.toString())
+    // Transfer
+    session.transfer(ff, REL_FAILURE)
+  } catch (e2) {
+    log.error("Error in RemoveSplitFiles")
+    log.error(e2);
+  }
 }
