@@ -60,6 +60,7 @@ This component allows an incoming relationship.
 
 [Readme](./README.md),
 [Split Files Into 4GB Parts](./SplitFiles.md),
+[Split S3 Requests Into 4GB Parts](./S3RequestSplit.md),
 [Remove Split Files When Done](./RemoveSplitFiles.md),
 [Join Files From 4GB Parts](./JoinFiles.md),
 [Upload File System to Grey Matter Data with File Splitting](../nifi-templates/File_System_to_GM_Data_(With_File_Splitting).xml)

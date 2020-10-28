@@ -108,10 +108,15 @@ try {
   // ### Remove the initiating flowfile that is now split up -----------------
   session.remove(ff)
 } catch (e) {
-  // Log to console
-  log.error("Error during split of large file: ${fName}", e)
-  // Set attribute with error
-  ff = session.putAttribute(ff, 'splitfiles.error.message', e.toString())
-  // Transfer
-  session.transfer(ff, REL_FAILURE)
+  try {
+    // Log to console
+    log.error("Error during split of large file: ${fName}", e)
+    // Set attribute with error
+    ff = session.putAttribute(ff, 'splitfiles.error.message', e.toString())
+    // Transfer
+    session.transfer(ff, REL_FAILURE)
+  } catch (e2) {
+    log.error("Error in SplitFiles")
+    log.error(e2);
+  }
 }

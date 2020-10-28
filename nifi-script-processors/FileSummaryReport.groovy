@@ -104,13 +104,14 @@ try {
   session.transfer(ff, REL_SUCCESS)
 
 } catch(e) {
-
-  // Log to console
-  log.error("Error during appending file of split file", e)
-
-  // Set attribute with error
-  ff = session.putAttribute(ff, 'filesummaryreport.error.message', e.toString())
- 
-  // Transfer
-  session.transfer(ff, REL_FAILURE)
+  try {
+    // Log to console
+    log.error("Error during appending file of split file", e)
+    // Set attribute with error
+    ff = session.putAttribute(ff, 'filesummaryreport.error.message', e.toString()) 
+    // Transfer
+    session.transfer(ff, REL_FAILURE)
+  } catch(e2) {
+    log.error("Error in FileSummaryReport")
+  }
 }
