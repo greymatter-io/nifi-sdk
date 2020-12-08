@@ -146,9 +146,10 @@ try
       numberOfParts += 1
     }
     numberOfParts = numberOfParts.toInteger()
-    // ### Validate
+    // ### Validate wont exceed range of filepart_aaa to filepart_zzy as filepart_zzz is used for terminator
+    //     The number 17575 here is (26*26*26)-1
     if (numberOfParts >= 17575) {
-      throw new Exception("Number of parts to generate ${numberOfParts} exceeds allowable max ${fps}")
+      throw new Exception("Number of parts to generate (${numberOfParts}) exceeds allowable max of 17575")
     }
     // ### Initialize attributes
     def attrMap = [:]
