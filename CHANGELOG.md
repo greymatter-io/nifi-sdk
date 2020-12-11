@@ -1,3 +1,6 @@
+## December
+- Update GetPolicies to be consistent with NiFi 1.12.1 InvokeHttp TLS config
+
 ## November
 - Update README.md to provide more guidance on processor usage within NiFi
 
