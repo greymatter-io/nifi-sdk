@@ -377,10 +377,11 @@ public final class GetPolicies extends AbstractProcessor {
                             logger.debug("response JSON from Data Policies server: " + responseJson);
 
                             assert responseJson != null;
-                            session.putAttribute(requestFlowFile, "gmdata.objectpolicy", responseJson.getOtherFields().get("objectpolicy").toString());
+                            //String json = objectMapper.writeValueAsString(mClass6.getOtherFields().get("objectpolicy"));
+                            session.putAttribute(requestFlowFile, "gmdata.objectpolicy", objectMapper.writeValueAsString(responseJson.getOtherFields().get("objectpolicy")));
                             session.putAttribute(requestFlowFile, "gmdata.lisp", responseJson.getOtherFields().get("lisp").toString());
-                            session.putAttribute(requestFlowFile, "gmdata.security", responseJson.getOtherFields().get("security").toString());
-                            session.putAttribute(requestFlowFile, "gmdata.originalobjectpolicy", quote(responseJson.getOtherFields().get("originalobjectpolicy").toString()));
+                            session.putAttribute(requestFlowFile, "gmdata.security", objectMapper.writeValueAsString(responseJson.getOtherFields().get("security")));
+                            session.putAttribute(requestFlowFile, "gmdata.originalobjectpolicy", objectMapper.writeValueAsString(responseJson.getOtherFields().get("originalobjectpolicy")));
 
                             logger.debug("set attributes");
                         }

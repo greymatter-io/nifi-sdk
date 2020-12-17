@@ -34,7 +34,7 @@ public class GetPoliciesTest {
         // Make things verbose:
         System.setProperty("org.slf4j.simpleLogger.log.nifi.processors.standard", "debug");
         testRunner = TestRunners.newTestRunner(GetPolicies.class);
-        enabled = false;
+        enabled = true;
     }
 
     public StandardSSLContextService MakeSSL(){
@@ -93,7 +93,7 @@ public class GetPoliciesTest {
         assertEquals("", flowFile.getAttribute("getpolicies.response.body"));  // it is 200, no errors should be here
         assertEquals("https://127.0.0.1:8081/convert/addpermissions", flowFile.getAttribute("getpolicies.request.url"));
         assertEquals("CN=gm-data,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US", flowFile.getAttribute("getpolicies.remote.dn"));
-        assertEquals("{label=UNCLASSIFIED, foreground=#FFFFFF, background=#007A33}", flowFile.getAttribute("gmdata.security"));
+        assertEquals("{\"label\":\"UNCLASSIFIED\",\"foreground\":\"#FFFFFF\",\"background\":\"#007A33\"}", flowFile.getAttribute("gmdata.security"));
         assertEquals("(if (and (or (contains dissem_countries USA)) (and (contains f_clearance u))) (if (tells user_dn) (or (if (or (contains f_share dborncamp)) (yield C R))) (yield R X)))", flowFile.getAttribute("gmdata.lisp"));
 
         assertEquals("\"{\\\"acm\\\":{\\\"classif\\\":\\\"U\\\",\\\"f_clearance\\\":[\\\"u\\\"],\\\"portion\\\":\\\"U\\\",\\\"banner\\\":\\\"UNCLASSIFIED\\\",\\\"share\\\":{},\\\"version\\\":\\\"2.1.0\\\",\\\"dissem_countries\\\":[\\\"USA\\\"]},\\\"permission\\\":{\\\"read\\\":{\\\"allow\\\":[\\\"_everyone\\\"]},\\\"create\\\":{\\\"allow\\\":[\\\"dborncamp\\\"]},\\\"update\\\":{},\\\"purge\\\":{},\\\"delete\\\":{},\\\"execute\\\":{}}}\"", flowFile.getAttribute("gmdata.originalobjectpolicy"));
