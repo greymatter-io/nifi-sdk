@@ -47,12 +47,12 @@
 	</modules>
 	<distributionManagement>
 		<repository>
-			<id>oss-release</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<id>nexus-release</id>
+			<url>https://nexus.greymatter.io/repository/maven-release/</url>
 		</repository>
 		<snapshotRepository>
-			<id>oss-snapshot</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<id>nexus-snapshots</id>
+			<url>https://nexus.greymatter.io/repository/maven-snapshot/</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<dependencies>

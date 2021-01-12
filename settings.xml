@@ -1,12 +1,12 @@
 <settings>
     <servers>
         <server>
-            <id>oss-release</id>
+            <id>nexus-release</id>
             <username>${env.NEXUS_USERNAME}</username>
             <password>${env.NEXUS_PASSWORD}</password>
         </server>
         <server>
-            <id>oss-snapshot</id>
+            <id>nexus-snapshot</id>
             <username>${env.NEXUS_USERNAME}</username>
             <password>${env.NEXUS_PASSWORD}</password>
         </server>
