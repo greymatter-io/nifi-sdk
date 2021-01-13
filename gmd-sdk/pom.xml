@@ -138,6 +138,11 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
+					<serverId>nexus</serverId>
+					<nexusUrl>https://nexus.greymatter.io</nexusUrl>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
