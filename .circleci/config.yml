@@ -107,7 +107,7 @@ jobs:
 
       # Don't need to run the tests again since they'll be run in tester
       - run: |
-          cd gmd-sdk && source .environment && mvn clean install deploy -s /home/circleci/nifi-sdk/settings.xml -DskipTests
+          cd gmd-sdk && mvn clean install deploy -s /home/circleci/nifi-sdk/settings.xml -DskipTests
 
       - save_cache:
           paths:
@@ -138,7 +138,7 @@ jobs:
 
       # Don't need to run the tests again since they'll be run in tester
       - run: |
-          cd gmd-sdk && source .environment && mvn clean install deploy -s /home/circleci/nifi-sdk/settings.xml -DskipTests
+          cd gmd-sdk && mvn clean install deploy -s /home/circleci/nifi-sdk/settings.xml -DskipTests
 
       - save_cache:
           paths:

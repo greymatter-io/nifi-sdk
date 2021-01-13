@@ -66,28 +66,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.deciphernow</groupId>
-				<artifactId>bouncycastle-maven-plugin</artifactId>
-				<version>1.1.1</version>
-				<configuration>
-					<!--suppress UnresolvedMavenProperty -->
-					<passphrase>${env.PGP_PASSPHRASE}</passphrase>
-					<!--suppress UnresolvedMavenProperty -->
-					<rings>${env.PGP_RINGS}</rings>
-					<!--suppress UnresolvedMavenProperty -->
-					<userId>${env.PGP_USER_ID}</userId>
-				</configuration>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
 				<version>4.2.0</version>
