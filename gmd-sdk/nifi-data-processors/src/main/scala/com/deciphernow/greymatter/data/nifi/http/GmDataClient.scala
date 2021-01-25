@@ -11,7 +11,7 @@ import io.circe.syntax._
 import io.circe.parser.decode
 import cats.implicits._
 import fs2.Stream
-import cats.effect.Sync
+import cats.effect.{IO, Sync}
 import org.http4s.Status.{ServerError, Successful}
 
 trait GmDataClient[F[_]] extends Http4sClientDsl[F] {
@@ -27,7 +27,7 @@ trait GmDataClient[F[_]] extends Http4sClientDsl[F] {
           case Left(err) => throw new Throwable(s"There was a problem decoding $response: $err")
         }
       }
-      case errResponse => gmDataError(errResponse)
+      case errResponse => request.flatMap(gmDataError(errResponse, _))
     }
   }
 
@@ -35,11 +35,11 @@ trait GmDataClient[F[_]] extends Http4sClientDsl[F] {
     request <- Stream.eval(existingRequest.map(_.withHeaders(headers)))
     stream <- client.stream(request).flatMap {
       case Successful(resp: Response[F]) => resp.body.through(byteArrayParser).through(decoder[F, X])
-      case errResponse => Stream.eval(gmDataError[X](errResponse))
+      case errResponse => Stream.eval(gmDataError[X](errResponse, request))
     }
   } yield stream
 
-  def gmDataError[X](response: Response[F])(implicit d: Decoder[X], F: Sync[F]): F[X] = response.as[String].map(err => throw new Throwable(s"There was an error response from GM Data with response code ${response.status.code}: $err"))
+  def gmDataError[X](response: Response[F], request: Request[F])(implicit d: Decoder[X], F: Sync[F]): F[X] = response.as[String].map(err => throw new Throwable(s"There was an error response from ${request.uri} with response code ${response.status.code}: $err"))
 
   private def get[X](path: Uri)(client: Client[F], headers: Headers)(implicit F: Sync[F], decoder: Decoder[X]): F[X] = writeToGmData[X](client, headers, Method.GET(path))
 

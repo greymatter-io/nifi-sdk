@@ -1,3 +1,7 @@
+## January
+- Update http error message to include request URI
+- Release 1.0.3
+
 ## December
 - Update GetPolicies to be consistent with NiFi 1.12.1 InvokeHttp TLS config
 
