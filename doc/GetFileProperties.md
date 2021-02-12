@@ -1,4 +1,4 @@
-# GetOidForPath
+# GetFileProperties
 
 ## Description:
 
