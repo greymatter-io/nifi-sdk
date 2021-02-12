@@ -8,7 +8,7 @@ import org.apache.nifi.processor.util.StandardValidators
 
 trait ListFilesProperties extends CommonProperties with ErrorHandling {
 
-  protected lazy val inputDirectoryProperty = buildRequiredProperty("Input Directory", "The input directory from which files to pull files.", List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), ExpressionLanguageScope.VARIABLE_REGISTRY).build()
+  protected lazy val inputDirectoryProperty = buildRequiredProperty("Input Directory", "The input directory from which files are pulled.", List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), ExpressionLanguageScope.VARIABLE_REGISTRY).build()
 
   protected lazy val recurseProperty = buildRequiredProperty("Recurse Subdirectories", "Indicates whether to list files from subdirectories of the directory.", List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR), ExpressionLanguageScope.VARIABLE_REGISTRY).defaultValue("true").allowableValues("true", "false").build()
 

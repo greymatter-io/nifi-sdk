@@ -124,7 +124,7 @@ class PrepareWriteRequestTest extends FunSpec with TestContext with ProcessorRel
       `Transfer-Encoding`(TransferCoding.chunked),
       `Content-Type`(MediaType.multipartType("form-data", Some(boundary)))
     ))
-    writeToGmData[List[Metadata]](client, multipartHeaders ++ headers, request).map(_.head)
+    writeToGmData[List[Metadata]](client, multipartHeaders ++ headers, request, defaultHandleResponseFunction[List[Metadata]]).map(_.head)
   }
 
   describe("PrepareWriteRequest") {

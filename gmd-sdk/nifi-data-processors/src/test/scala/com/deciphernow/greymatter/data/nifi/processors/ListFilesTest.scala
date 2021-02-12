@@ -51,48 +51,6 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
   val totalFileNumber = numberOfFiles * (scala.math.pow(numberOfFolders, levels + 1) - 1)
   override lazy val rootUrlProperty = rootUrlProp(scope = ExpressionLanguageScope.VARIABLE_REGISTRY)
 
-  private def createMetadata(parentoid: String, objectPolicy: Json, action: String, mimeType: Option[String] = Some("text/plain"), name: String = randomString(), isFile: Option[Boolean] = Some(true)) = {
-    Metadata(parentoid, name, objectPolicy, mimeType, None, action, None, None, None, None, None, None, None, None, isfile = isFile)
-  }
-  private def createFolderMetadata(name: String = randomString()) = createMetadata(_, _, _, None, name, None)
-
-  private def createRandomFiles(objectPolicy: Json, action: String, directory: String, fileStream: Stream[Pure, Byte], name: String, folderName: String)(levels: Int, filesPerLevel: Int, foldersPerLevel: Int)(implicit sslContext: SSLContext, rootUrl: Uri, headers: Headers, client: Client[IO]) = for {
-    userFolderOid <- getUserFolderOid(objectPolicy)
-    newMetadata = List(createFolderMetadata(directory)(userFolderOid, objectPolicy, "U"))
-    parentOid <- writeFolder(newMetadata, rootUrl, headers).map(_.oid.get)
-    files <- createFiles(objectPolicy, action, parentOid, fileStream, name, folderName)("/", levels, filesPerLevel, foldersPerLevel)
-  } yield files
-
-  private def createFiles(objectPolicy: Json, action: String, parentOid: String, fileStream: Stream[Pure, Byte], name: String, folderName: String)(path: String, levels: Int, filesPerLevel: Int, foldersPerLevel: Int)(implicit rootUrl: Uri, headers: Headers, client: Client[IO]): IO[List[Metadata]] = for {
-    files <- List.fill(filesPerLevel)(createMetadata(parentOid, objectPolicy, action, name = name)).traverse { metadata =>
-      writeFile(List(metadata), rootUrl, headers, fileStream)
-    }.map(_.map(_.copy(relativePath = Some(path))))
-    folders <- List.fill(foldersPerLevel)(createFolderMetadata(folderName)(parentOid, objectPolicy, action)).traverse(metadata => writeFolder(List(metadata), rootUrl, headers))
-    emptyMetadata = IO(List[Metadata]())
-    moreFiles <- {
-      if (levels > 0) folders.foldLeft(emptyMetadata) { (all, folder) =>
-        all.flatMap { list =>
-          val newPath = s"$path${folder.name}/"
-          createFiles(objectPolicy, action, folder.oid.get, fileStream, name, folderName)(newPath, levels - 1, filesPerLevel, foldersPerLevel).map(_ ++ list)
-        }
-      }
-      else emptyMetadata
-    }
-  } yield files ++ moreFiles
-
-  private def writeFile(metadata: List[Metadata], rootUrl: Uri, headers: Headers, fileStream: Stream[Pure, Byte])(implicit client: Client[IO]) = {
-    val printer = Printer.spaces2.copy(dropNullValues = true)
-    val body = metadata.asJson.pretty(printer)
-    val multipart = createMultipart(body, metadata.head.name, fileStream)
-    val request = Method.POST(multipart, rootUrl / "write")
-    writeToGmData[List[Metadata]](client, multipart.headers ++ headers, request).map(_.head)
-  }
-
-  private def createMultipart(metadata: String, fileName: String, fileStream: Stream[Pure, Byte]) = {
-    val contentType = `Content-Type`(MediaType.application.json)
-    Multipart[IO](Vector(Part.formData("meta", metadata), Part.fileData("blob", fileName, fileStream, contentType)))
-  }
-
   private def runProcessorTests(setup: (TestRunner, String, Json) => List[Metadata], policies: List[String] = policies)(runnerTests: (TestRunner, List[Metadata], String) => Unit) = {
     policies.map(parse).map(_.right.get).foreach { objectPolicy =>
       val processor = new ListFiles
@@ -107,17 +65,6 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
 
   private def someDirectory(newDirectory: String) = s"/1/world/$npeEmail/$newDirectory"
 
-  private def createFilesWithSSL(sslContext: SSLContext, objectPolicy: Json, action: String, directory: String, rootUrl: String, fileStream: Stream[Pure, Byte] = Stream.emits("".getBytes), name: String = randomString(), folderName: String = randomString()) = for {
-    client <- BlazeClientBuilder[IO](ec, Some(sslContext)).withCheckEndpointAuthentication(false).allocated.map(_._1)
-    url = Uri.fromString(rootUrl).right.get
-    files <- createRandomFiles(objectPolicy, action, directory, fileStream, name, folderName)(levels, numberOfFiles, numberOfFolders)(sslContext, url, headers, client)
-  } yield files.map(_.copy(rootUrlOption = Some(rootUrl)))
-
-  private def iterateOrFail(runner: TestRunner, end: Int = 10,  start: Int = 0)(successCondition: TestRunner => Boolean): Unit = if(!successCondition(runner) && start < end) {
-    runner.run()
-    iterateOrFail(runner, end, start +1)(successCondition)
-  }
-
   def happyPathTest(recurse: Boolean, action: String = "C", policies: List[String] = policies, rootUrl: String = gmDataUrl) = runProcessorTests({ (runner, directory, objectPolicy) =>
     val header: Header = headers.toList.head
     runner.setVariable(header.name.toString.toUpperCase, header.value)
@@ -127,7 +74,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
     runner.setProperty(inputDirectoryProperty, someDirectory(directory))
     runner.setProperty(recurseProperty, recurse.toString)
     val sslContext = addSSLService(runner, sslContextServiceProperty)
-    createFilesWithSSL(sslContext, objectPolicy, action, directory, rootUrl).unsafeRunSync()
+    createFilesWithSSL(sslContext, objectPolicy, action, directory, rootUrl, levels, numberOfFiles, numberOfFolders, headers).unsafeRunSync()
   }, policies) _
 
   describe("ListFiles") {
@@ -144,7 +91,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
       it("should be able to pick up new flowfiles without duplicating old ones") {
         happyPathTest(true) { (runner, expectedFiles, directory) =>
           val sslContext = getSSLContext(runner)
-          val newFiles = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl).unsafeRunSync()
+          val newFiles = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, levels, numberOfFiles, numberOfFolders, headers).unsafeRunSync()
           val allFiles = newFiles ++ expectedFiles
           iterateOrFail(runner)(_.getFlowFilesForRelationship(RelSuccess).asScala.length >= allFiles.length)
           runner.assertTransferCount(RelSuccess, totalFileNumber.toInt * 2)
@@ -157,7 +104,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
       it("should reset the timestamp and pick up old files on any property change") {
         happyPathTest(true) { (runner, expectedFiles, directory) =>
           val sslContext = getSSLContext(runner)
-          val newFiles = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl).unsafeRunSync()
+          val newFiles = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, levels, numberOfFiles, numberOfFolders, headers).unsafeRunSync()
           runner.setProperty(rootUrlProperty, "bad")
           runner.setProperty(rootUrlProperty, gmDataUrl)
           val allFiles = newFiles ++ expectedFiles ++ expectedFiles
@@ -179,7 +126,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
         happyPathTest(true) { (runner, expectedFiles, directory) =>
           val sslContext = getSSLContext(runner)
           val name = randomString()
-          def createFiles(name: String) = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, name = name).unsafeRunSync()
+          def createFiles(name: String) = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, levels, numberOfFiles, numberOfFolders, headers, name = name).unsafeRunSync()
           val newFiles = createFiles(name)
           createFiles(randomString())
           val allFiles = newFiles ++ expectedFiles
@@ -193,7 +140,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
       it("should only list files that match the path filter") {
         happyPathTest(true) { (runner, expectedFiles, directory) =>
           val sslContext = getSSLContext(runner)
-          def createFiles(name: String) = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, folderName = name).unsafeRunSync()
+          def createFiles(name: String) = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, levels, numberOfFiles, numberOfFolders, headers, folderName = name).unsafeRunSync()
           val folderName = randomString()
           runner.setProperty(pathFilterProperty, s"$folderName")
           createFiles(folderName)
@@ -210,7 +157,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
           val goodFile = Stream.emits("AAAAAAAAAAAAAAA".getBytes)
           val tooBigFile = Stream.emits("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".getBytes)
           val tooSmallFile = Stream.emits("AA".getBytes)
-          def createFiles(file: Stream[Pure, Byte]) = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, fileStream = file)
+          def createFiles(file: Stream[Pure, Byte]) = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, levels, numberOfFiles, numberOfFolders, headers, fileStream = file)
           runner.setProperty(minFileSizeProperty, "10")
           runner.setProperty(maxFileSizeProperty, "20")
           (for{
@@ -227,7 +174,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
       it("should only show files within the min and max file age property") {
         happyPathTest(true) { (runner, expectedFiles, directory) =>
           val sslContext = getSSLContext(runner)
-          def createFiles = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl)
+          def createFiles = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, levels, numberOfFiles, numberOfFolders, headers)
           def getSeconds = System.currentTimeMillis() / 1000
           val setup = for{
             _ <- createFiles
@@ -257,7 +204,7 @@ class ListFilesTest extends FunSpec with TestContext with Matchers with ListFile
       it("should apply url filters correctly") {
         happyPathTest(false) { (runner, _, directory) =>
           val sslContext = getSSLContext(runner)
-          def createFiles = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl).unsafeRunSync()
+          def createFiles = createFilesWithSSL(sslContext, parse(policies.head).right.get, "C", directory, gmDataUrl, levels, numberOfFiles, numberOfFolders, headers).unsafeRunSync()
           val last = createFiles.map(_.tstamp.get).max
           createFiles
           runner.setProperty(urlFilterProperty, s"last=$last")

@@ -4,23 +4,31 @@ import java.io.{ByteArrayInputStream, File, FileInputStream}
 import java.security.KeyStore
 import java.time.LocalDateTime
 
-import cats.effect.IO
+import cats.effect.{ConcurrentEffect, IO}
+import cats.implicits._
 import com.deciphernow.greymatter.data.nifi.http.Metadata
-import com.deciphernow.greymatter.data.nifi.processors.utils.GetOidForPathStreamingFunctions
+import com.deciphernow.greymatter.data.nifi.processors.utils.GetOidForPathUtils
 import com.deciphernow.greymatter.data.nifi.properties.CommonProperties
 import com.deciphernow.greymatter.data.nifi.relationships.ProcessorRelationships
-import io.circe.Json
+import fs2.{Pure, Stream}
+import io.circe.{Json, Printer}
+import io.circe.syntax._
+import io.circe.generic.auto._
 import org.apache.nifi.components.PropertyDescriptor
 import org.apache.nifi.ssl.SSLContextService.ClientAuth
 import org.apache.nifi.ssl.StandardSSLContextService
 import org.apache.nifi.util.TestRunner
-import org.http4s.{Headers, Uri}
+import org.http4s.{Headers, MediaType, Method, Uri}
 import org.http4s.client.Client
 import javax.net.ssl.{KeyManagerFactory, SSLContext, TrustManagerFactory}
+import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.headers.`Content-Type`
+import org.http4s.multipart.{Multipart, Part}
 
+import scala.concurrent.ExecutionContext
 import scala.util.Random
 
-trait TestContext extends CommonProperties with ProcessorRelationships with GetOidForPathStreamingFunctions {
+trait TestContext extends CommonProperties with ProcessorRelationships with GetOidForPathUtils {
 
   import scala.collection.JavaConverters._
 
@@ -68,10 +76,10 @@ trait TestContext extends CommonProperties with ProcessorRelationships with GetO
     userFolderOid <- writeFolder(userMetadata, rootUrl, headers).map(_.oid.get)
   } yield userFolderOid
 
-  private def createMetadata(parentoid: String, objectPolicy: Json, action: String, mimeType: Option[String] = Some("text/plain"), name: String = randomString(), isFile: Option[Boolean] = Some(true)) = {
+  def createMetadata(parentoid: String, objectPolicy: Json, action: String, mimeType: Option[String] = Some("text/plain"), name: String = randomString(), isFile: Option[Boolean] = Some(true)) = {
     Metadata(parentoid, name, objectPolicy, mimeType, None, action, None, None, None, None, None, None, None, None, isfile = isFile)
   }
-  private def createFolderMetadata(name: String = randomString()) = createMetadata(_, _, _, None, name, None)
+  def createFolderMetadata(name: String = randomString()) = createMetadata(_, _, _, None, name, None)
 
   def randomString(length: Int = 5, prefix: Option[String] = Some(LocalDateTime.now().toString)) = prefix.getOrElse("") + Random.alphanumeric.take(length).mkString
 
@@ -100,6 +108,55 @@ trait TestContext extends CommonProperties with ProcessorRelationships with GetO
     val sslContext = SSLContext.getInstance("TLS")
     sslContext.init(keyManagerFactory.getKeyManagers, trustManagerFactory.getTrustManagers, null)
     sslContext
+  }
+
+  def createRandomFiles(objectPolicy: Json, action: String, directory: String, fileStream: Stream[Pure, Byte], name: String, folderName: String)(levels: Int, filesPerLevel: Int, foldersPerLevel: Int)(implicit sslContext: SSLContext, rootUrl: Uri, headers: Headers, client: Client[IO]) = for {
+    userFolderOid <- getUserFolderOid(objectPolicy)
+    newMetadata = List(createFolderMetadata(directory)(userFolderOid, objectPolicy, "U"))
+    parentOid <- writeFolder(newMetadata, rootUrl, headers).map(_.oid.get)
+    files <- createFiles(objectPolicy, action, parentOid, fileStream, name, folderName)("/", levels, filesPerLevel, foldersPerLevel)
+  } yield files
+
+  def createFiles(objectPolicy: Json, action: String, parentOid: String, fileStream: Stream[Pure, Byte], name: String, folderName: String)(path: String, levels: Int, filesPerLevel: Int, foldersPerLevel: Int)(implicit rootUrl: Uri, headers: Headers, client: Client[IO]): IO[List[Metadata]] = for {
+    files <- List.fill(filesPerLevel)(createMetadata(parentOid, objectPolicy, action, name = name)).traverse { metadata =>
+      writeFile(List(metadata), rootUrl, headers, fileStream)
+    }.map(_.map(_.copy(relativePath = Some(path))))
+    folders <- List.fill(foldersPerLevel)(createFolderMetadata(folderName)(parentOid, objectPolicy, action)).traverse(metadata => writeFolder(List(metadata), rootUrl, headers))
+    emptyMetadata = IO(List[Metadata]())
+    moreFiles <- {
+      if (levels > 0) folders.foldLeft(emptyMetadata) { (all, folder) =>
+        all.flatMap { list =>
+          val newPath = s"$path${folder.name}/"
+          createFiles(objectPolicy, action, folder.oid.get, fileStream, name, folderName)(newPath, levels - 1, filesPerLevel, foldersPerLevel).map(_ ++ list)
+        }
+      }
+      else emptyMetadata
+    }
+  } yield files ++ moreFiles
+
+  def createFilesWithSSL(sslContext: SSLContext, objectPolicy: Json, action: String, directory: String, rootUrl: String, levels: Int, numberOfFiles: Int, numberOfFolders: Int, headers: Headers, fileStream: Stream[Pure, Byte] = Stream.emits("".getBytes), name: String = randomString(), folderName: String = randomString())
+                                (implicit ec: ExecutionContext, ce: ConcurrentEffect[IO]) = for {
+    client <- BlazeClientBuilder[IO](ec, Some(sslContext)).withCheckEndpointAuthentication(false).allocated.map(_._1)
+    url = Uri.fromString(rootUrl).right.get
+    files <- createRandomFiles(objectPolicy, action, directory, fileStream, name, folderName)(levels, numberOfFiles, numberOfFolders)(sslContext, url, headers, client)
+  } yield files.map(_.copy(rootUrlOption = Some(rootUrl)))
+
+  def writeFile(metadata: List[Metadata], rootUrl: Uri, headers: Headers, fileStream: Stream[Pure, Byte])(implicit client: Client[IO]) = {
+    val printer = Printer.spaces2.copy(dropNullValues = true)
+    val body = metadata.asJson.pretty(printer)
+    val multipart = createMultipart(body, metadata.head.name, fileStream)
+    val request = Method.POST(multipart, rootUrl / "write")
+    writeToGmData[List[Metadata]](client, multipart.headers ++ headers, request, defaultHandleResponseFunction[List[Metadata]]).map(_.head)
+  }
+
+  def createMultipart(metadata: String, fileName: String, fileStream: Stream[Pure, Byte]) = {
+    val contentType = `Content-Type`(MediaType.application.json)
+    Multipart[IO](Vector(Part.formData("meta", metadata), Part.fileData("blob", fileName, fileStream, contentType)))
+  }
+
+  def iterateOrFail(runner: TestRunner, end: Int = 10,  start: Int = 0)(successCondition: TestRunner => Boolean): Unit = if(!successCondition(runner) && start < end) {
+    runner.run()
+    iterateOrFail(runner, end, start +1)(successCondition)
   }
 
 }

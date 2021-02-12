@@ -11,8 +11,9 @@ The following processors are in the com.deciphernow.greymatter.data.nifi.process
 | [BuildPermissions](./BuildPermissions.md) | A processor to replicate unix like file permissions of a file to upload to Grey Matter Data. |
 | [GetOidForPath](./GetOidForPath.md) | A processor that creates a folder structure in Grey Matter Data based on a given path. |
 | [GetPolicies](./GetPolicies.md) | A processor that will transform a provided permission structure and access control model into the objectPolicy and originalObjectPolicy for assignment into a Grey Matter Data event. |
-| [ListFiles](./ListFiles.md) | Retrieves a listing of files from a Grey Matter Data instance. For each file that is listed, creates a FlowFile that represents the file. |
+| [ListFiles](./ListFiles.md) | A processor that retrieves a listing of files from a Grey Matter Data instance. For each file that is listed, creates a FlowFile that represents the file. |
 | [PrepareWriteRequest](./PrepareWriteRequest.md) | A processor that builds a Grey Matter Data compatible request body for a given file path. |
+| [GetFileProperties](./GetFileProperties.md) | A processor that retrieves file properties of a GMData object. |
 
 ## Auxiliary Scripts
 

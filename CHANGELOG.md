@@ -1,3 +1,8 @@
+## February
+- New processors
+  - GetFileProperties
+- Release 1.0.4
+
 ## January
 - Update http error message to include request URI
 - Release 1.0.3
