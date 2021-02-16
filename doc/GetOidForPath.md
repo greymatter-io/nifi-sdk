@@ -53,7 +53,9 @@ Dynamic Properties allow the user to specify an arbitrary name and value of a pr
 
 ### Writes Attributes:
 
-None specified.
+| Name | Description |
+| --- | --- |
+| gmdata.parentoid | The object id of the parent folder created by the processor. |
 
 ### State Management:
 

@@ -3,10 +3,10 @@ package com.deciphernow.greymatter.data.nifi.processors
 import java.util.concurrent.Executors
 
 import cats.effect.concurrent.Ref
-import cats.effect.{ Blocker, ContextShift, IO }
+import cats.effect.{Blocker, ContextShift, IO}
 import cats.implicits._
 import com.deciphernow.greymatter.data.nifi.processors.utils.GetOidForPathUtils
-import org.apache.nifi.annotation.behavior.DynamicProperty
+import org.apache.nifi.annotation.behavior.{DynamicProperty, WritesAttribute, WritesAttributes}
 import org.apache.nifi.expression.ExpressionLanguageScope
 import org.http4s.client.JavaNetClientBuilder
 
@@ -24,6 +24,7 @@ import org.apache.nifi.processor._
 @SeeAlso(Array())
 @DynamicProperty(name = "Header Name", value = "Attribute Expression Language", expressionLanguageScope = ExpressionLanguageScope.FLOWFILE_ATTRIBUTES, description = "Send request header with a key matching the Dynamic Property Key and a value created by evaluating the Attribute Expression Language set in the value of the Dynamic Property.")
 @ReadsAttributes(Array(new ReadsAttribute(attribute = "path", description = """The path and filename. Only folders in the path will be created. E.g. a value of "X" would result in no folders being created, but for "X/Y" or "X/Y.pdf", a folder named "X" would be created.""")))
+@WritesAttributes(Array(new WritesAttribute(attribute = "gmdata.parentoid", description="The status code returned by GM Data when calling the props endpoint.")))
 class GetOidForPath extends AbstractProcessor with GetOidForPathUtils {
 
   import scala.collection.JavaConverters._
