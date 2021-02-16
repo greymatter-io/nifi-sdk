@@ -3,7 +3,7 @@ package com.deciphernow.greymatter.data.nifi.processors
 import cats.effect.{ ContextShift, IO, Timer }
 import cats.implicits._
 import fs2.Stream
-import com.deciphernow.greymatter.data.nifi.processors.utils.PrepareWriteRequestStreamingFunctions
+import com.deciphernow.greymatter.data.nifi.processors.utils.PrepareWriteRequestUtils
 
 import scala.concurrent.ExecutionContext
 import scala.util.{ Failure, Success, Try }
@@ -21,7 +21,7 @@ import org.apache.nifi.processor.{ AbstractProcessor, ProcessSession, ProcessorI
 @ReadsAttributes(Array(
   new ReadsAttribute(attribute = "mime.type", description = "mime type from processor"),
   new ReadsAttribute(attribute = "filename", description = "filename from list file processor")))
-class PrepareWriteRequest extends AbstractProcessor with PrepareWriteRequestStreamingFunctions {
+class PrepareWriteRequest extends AbstractProcessor with PrepareWriteRequestUtils {
 
   import scala.collection.JavaConverters._
 

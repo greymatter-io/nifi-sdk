@@ -17,3 +17,5 @@ com.deciphernow.greymatter.data.nifi.processors.BuildPermissions
 com.deciphernow.greymatter.data.nifi.processors.GetPolicies
 com.deciphernow.greymatter.data.nifi.processors.GetOidForPath
 com.deciphernow.greymatter.data.nifi.processors.ListFiles
+com.deciphernow.greymatter.data.nifi.processors.GetFileProperties
+

@@ -16,7 +16,7 @@ import org.apache.nifi.processor.{ ProcessContext, ProcessSession, Relationship 
 
 import scala.util.Random
 
-trait PrepareWriteRequestStreamingFunctions extends PrepareWriteRequestProperties with ProcessorRelationships with ErrorHandling with ProcessorUtils {
+trait PrepareWriteRequestUtils extends PrepareWriteRequestProperties with ProcessorRelationships with ErrorHandling with ProcessorUtils {
 
   protected def writeSession(inputStream: Stream[IO, Byte], blocker: Blocker, session: ProcessSession, flowFile: FlowFile)(implicit cs: ContextShift[IO]) = {
     inputStream.through(fs2.io.writeOutputStream(IO(session.write(flowFile)), blocker)).attempt.reduce { (last, curr) =>

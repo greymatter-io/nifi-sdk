@@ -12,11 +12,11 @@ import org.apache.nifi.processor.{ ProcessContext, ProcessSession }
 import org.http4s.client.Client
 import org.http4s.{ Headers, Uri }
 
-trait GetOidForPathStreamingFunctions extends GetOidForPathProperties with ProcessorRelationships with GmDataClient[IO] with ErrorHandling with ProcessorUtils {
+trait GetOidForPathUtils extends GetOidForPathProperties with ProcessorRelationships with GmDataClient[IO] with ErrorHandling with ProcessorUtils {
 
   private def createFolders(implicit context: ProcessContext, flowFile: FlowFile, client: Client[IO]) = for {
     config <- getPropertyConfig
-    userFolderOid <- getUserFolder(config)
+    userFolderOid <- getUserFolderOid(config)
     intermediateOid <- config.intermediateFolders.traverse(getFinalFolderOid(userFolderOid, _, config.intermediateMetadata, config)).map(_.getOrElse(userFolderOid))
     finalOid <- config.folders.flatTraverse(getFinalFolderOid(intermediateOid, _, config.metadata(_, _), config))
   } yield finalOid
@@ -32,13 +32,13 @@ trait GetOidForPathStreamingFunctions extends GetOidForPathProperties with Proce
 
   private def getValidFolderProps(path: Uri.Path, headers: Headers)(implicit rootUrl: Uri, client: Client[IO]) = getFolderProps(path, headers).attempt.map(_.flatMap(getValidProps))
 
-  private def getUserFolder(propertyConfig: GetOidForPathConfig)(implicit client: Client[IO]) = for {
+  private def getUserFolderOid(propertyConfig: GetOidForPathConfig)(implicit client: Client[IO]): IO[Either[Throwable, String]] = for {
     configEither <- propertyConfig.folders.flatTraverse(_ => getConfig(propertyConfig.rootUrl, client, propertyConfig.headers).attempt map handleErrorAndContinue("There was an error hitting the /config endpoint of GM Data"))
-    self <- getSelf(propertyConfig.rootUrl, client, propertyConfig.headers).attempt map handleErrorAndContinue("There was an error hitting the /self endpoint of GM Data")
-    userFolderOid <- configEither.flatTraverse { config =>
-      self.flatMap(_.getUserField(config.GMDATA_NAMESPACE_USERFIELD)).flatTraverse {
-        getFolderOid(_, propertyConfig.userMetadata, propertyConfig)(config.GMDATA_NAMESPACE_OID)
-      }
+    userFolderOid <- configEither.flatTraverse{ config =>
+      for{
+        userFolder <- getUserFolder(propertyConfig.rootUrl, propertyConfig.headers, config, client)
+        oid <- userFolder.flatTraverse(getFolderOid(_, propertyConfig.userMetadata, propertyConfig)(config.GMDATA_NAMESPACE_OID))
+      } yield oid
     }
   } yield userFolderOid
 
