@@ -66,3 +66,21 @@ Here are some helpful links for navigating and using NiFi in general as well as 
 * https://nifi.apache.org/docs/nifi-docs/html/user-guide.html
 * https://nifi.apache.org/docs/nifi-docs/html/getting-started.html
 * https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html
+
+
+## Requirements for adding a processor to the SDK
+To add a processor to the SDK these are the things you need to do in order to make it accessible using the current process outlined in these docs:
+
+1. Add a reference to the processor's main class to [./gmd-sdk/nifi-data-processors/src/main/resources/META-INF/services/org.apache.nifi.processor.Processor](./gmd-sdk/nifi-data-processors/src/main/resources/META-INF/services/org.apache.nifi.processor.Processor).
+
+2. Update the release version for the project. The current list of files that need to be changed/hold references to the current version:
+  * [./gmd-sdk/pom.xml](./gmd-sdk/pom.xml)
+  * [./gmd-sdk/nifi-data-processors/pom.xml](./gmd-sdk/nifi-data-processors/pom.xml)
+  * [./gmd-sdk/nifi-data-nar/pom.xml](./gmd-sdk/nifi-data-processors/pom.xml)
+  * [./gmd-sdk/docker-compose.yml](./gmd-sdk/nifi-data-processors/pom.xml)
+
+3. Add a note to [./gmd-sdk/CHANGELOG.md](./gmd-sdk/CHANGELOG.md) listing the new processor and release version.
+
+4. Add a documentation page for the processor to [./doc](./doc). See examples in that directory for how the page should look.
+
+5. Add a reference to the documentation above to [./doc/README.md](./doc/README.md)
