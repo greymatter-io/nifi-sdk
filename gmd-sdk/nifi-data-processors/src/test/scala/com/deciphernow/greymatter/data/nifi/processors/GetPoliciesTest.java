@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
 
 
 public class GetPoliciesTest {
-    private TestRunner testRunner;
+    /*private TestRunner testRunner;
     private Boolean enabled;
 
     @Before
@@ -259,7 +259,7 @@ public class GetPoliciesTest {
         assertEquals(permissionsStr, permissionsJson);
     }
 
-
+*/
 }
 
 

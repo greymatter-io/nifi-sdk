@@ -15,7 +15,7 @@ import io.circe.{Json, Printer}
 import io.circe.syntax._
 import io.circe.generic.auto._
 import org.apache.nifi.components.PropertyDescriptor
-import org.apache.nifi.ssl.SSLContextService.ClientAuth
+import org.apache.nifi.security.util.ClientAuth
 import org.apache.nifi.ssl.StandardSSLContextService
 import org.apache.nifi.util.TestRunner
 import org.http4s.{Headers, MediaType, Method, Uri}
@@ -36,7 +36,7 @@ trait TestContext extends CommonProperties with ProcessorRelationships with GetO
   val objectPolicyOrganizationA = """{"label":"OrganizationAPolicy","requirements":{"f":"if","a":[{"f":"contains","a":[{"v":"org"},{"v":"OrganizationA"}]},{"f":"yield","a":[{"v":"C"},{"v":"R"},{"v":"U"},{"v":"D"},{"v":"P"},{"v":"X"}]}]}}"""
   val policies = List(objectPolicySimple, objectPolicyOrganizationA)
   val commonOptionalProperties = Map((originalObjectPolicyProperty, "placeholder"), (securityProperty, """{"label":"something","foreground":"something","background":"something"}"""))
-  val gmDataUrl = "https://0.0.0.0:8181"
+  val gmDataUrl = "https://0.0.0.0:8181/"
   val npeEmail = "nifinpe@example.com"
   val sslServiceName = "ssl-context"
 
@@ -70,7 +70,7 @@ trait TestContext extends CommonProperties with ProcessorRelationships with GetO
     userField = self.getUserField(config.GMDATA_NAMESPACE_USERFIELD).right.get
   } yield s"${config.GMDATA_NAMESPACE_OID}/$userField"
 
-  def getUserFolderOid(objectPolicy: Json)(implicit sslContext: SSLContext, rootUrl: Uri, headers: Headers, client: Client[IO])  = for {
+  def getUserFolderOid(objectPolicy: Json)(implicit rootUrl: Uri, headers: Headers, client: Client[IO])  = for {
     userFolderPath <- getUserFolderPath(rootUrl, headers)
     userMetadata = List(createFolderMetadata(npeEmail)(userFolderPath.split("/").head, objectPolicy, "U"))
     userFolderOid <- writeFolder(userMetadata, rootUrl, headers).map(_.oid.get)
@@ -80,6 +80,17 @@ trait TestContext extends CommonProperties with ProcessorRelationships with GetO
     Metadata(parentoid, name, objectPolicy, mimeType, None, action, None, None, None, None, None, None, None, None, isfile = isFile)
   }
   def createFolderMetadata(name: String = randomString()) = createMetadata(_, _, _, None, name, None)
+
+  def createIntermediateFolders(parentOid: String, path: List[String], objPolicy: Json, action: String = "C")(implicit rootUrl: Uri, headers: Headers, client: Client[IO]) = {
+    path.foldLeft(IO(parentOid)){ (lastOid, name) =>
+      lastOid.flatMap{ oid =>
+        val props = createFolderMetadata(name)(oid, objPolicy, action)
+        writeFolder(List(props), rootUrl, headers).map(_.oid.get)
+      }
+    }
+  }
+
+  def pathToList(path: String) = path.split("/").filter(name => name.nonEmpty && name != ".").toList
 
   def randomString(length: Int = 5, prefix: Option[String] = Some(LocalDateTime.now().toString)) = prefix.getOrElse("") + Random.alphanumeric.take(length).mkString
 
@@ -110,10 +121,8 @@ trait TestContext extends CommonProperties with ProcessorRelationships with GetO
     sslContext
   }
 
-  def createRandomFiles(objectPolicy: Json, action: String, directory: String, fileStream: Stream[Pure, Byte], name: String, folderName: String)(levels: Int, filesPerLevel: Int, foldersPerLevel: Int)(implicit sslContext: SSLContext, rootUrl: Uri, headers: Headers, client: Client[IO]) = for {
-    userFolderOid <- getUserFolderOid(objectPolicy)
-    newMetadata = List(createFolderMetadata(directory)(userFolderOid, objectPolicy, "U"))
-    parentOid <- writeFolder(newMetadata, rootUrl, headers).map(_.oid.get)
+  def createRandomFiles(parentOid: String, objectPolicy: Json, action: String, directory: String, fileStream: Stream[Pure, Byte], name: String, folderName: String)(levels: Int, filesPerLevel: Int, foldersPerLevel: Int)(implicit rootUrl: Uri, headers: Headers, client: Client[IO]) = for {
+    parentOid <- writeFolder(List(createFolderMetadata(directory)(parentOid, objectPolicy, "U")), rootUrl, headers).map(_.oid.get)
     files <- createFiles(objectPolicy, action, parentOid, fileStream, name, folderName)("/", levels, filesPerLevel, foldersPerLevel)
   } yield files
 
@@ -134,12 +143,11 @@ trait TestContext extends CommonProperties with ProcessorRelationships with GetO
     }
   } yield files ++ moreFiles
 
-  def createFilesWithSSL(sslContext: SSLContext, objectPolicy: Json, action: String, directory: String, rootUrl: String, levels: Int, numberOfFiles: Int, numberOfFolders: Int, headers: Headers, fileStream: Stream[Pure, Byte] = Stream.emits("".getBytes), name: String = randomString(), folderName: String = randomString())
-                                (implicit ec: ExecutionContext, ce: ConcurrentEffect[IO]) = for {
-    client <- BlazeClientBuilder[IO](ec, Some(sslContext)).withCheckEndpointAuthentication(false).allocated.map(_._1)
-    url = Uri.fromString(rootUrl).right.get
-    files <- createRandomFiles(objectPolicy, action, directory, fileStream, name, folderName)(levels, numberOfFiles, numberOfFolders)(sslContext, url, headers, client)
-  } yield files.map(_.copy(rootUrlOption = Some(rootUrl)))
+  def createRandomFilesAndMapRootUrl(parentOid: String, client: Client[IO], objectPolicy: Json, action: String, directory: String, rootUrl: String, levels: Int, numberOfFiles: Int, numberOfFolders: Int, headers: Headers, fileStream: Stream[Pure, Byte] = Stream.emits("".getBytes), name: String = randomString(), folderName: String = randomString())
+                                    (implicit ec: ExecutionContext, ce: ConcurrentEffect[IO]) =
+    createRandomFiles(parentOid, objectPolicy, action, directory, fileStream, name, folderName)(levels, numberOfFiles, numberOfFolders)(Uri.unsafeFromString(rootUrl.stripSuffix("/")), headers, client).map(_.map(_.copy(rootUrlOption = Some(rootUrl.stripSuffix("/")))))
+
+
 
   def writeFile(metadata: List[Metadata], rootUrl: Uri, headers: Headers, fileStream: Stream[Pure, Byte])(implicit client: Client[IO]) = {
     val printer = Printer.spaces2.copy(dropNullValues = true)

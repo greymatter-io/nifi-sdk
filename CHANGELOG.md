@@ -2,6 +2,10 @@
 - New processors
   - GetFileProperties
 - Release 1.0.4
+- Enhancements to processors
+  - Add optional property `Intermediate Folder Prefix` to GetFileProperties
+  - Add support for beginning or ending slashes in URL paths in processors
+- Release 1.0.5  
 
 ## January
 - Update http error message to include request URI

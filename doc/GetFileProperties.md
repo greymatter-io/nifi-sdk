@@ -18,6 +18,7 @@ In the list below, the names of required properties appear in bold. Any other pr
 | SSL Context Service | | | The [SSL Context Service](https://nifi.apache.org/docs/nifi-docs/components/org.apache.nifi/nifi-ssl-context-service-nar/1.11.4/org.apache.nifi.ssl.StandardSSLContextService/) used to provide client certificate information for TLS/SSL (https) connections. It is also used to connect to HTTPS Proxy. |
 | Attributes to Send | ${gmdata.attributestosend} | | Regular expression that defines which attributes to send as HTTP headers in the request. If not defined, no attributes are sent as headers. Also any dynamic properties set will be sent as headers. The dynamic property key will be the header key and the dynamic property value will be interpreted as expression language will be the header value.<br /><b>Supports Expression Language: true</b> |
 | Http Timeout | 5 | | The duration. in seconds, to wait before an http connection times out. <br /><b>Supports Expression Language: true (Variable Registry Only)</b> |
+| Intermediate Folder Prefix | ${gmdata.intermediatefolderprefix} | | When provided this path indicates intermediate folders that exist between the userfield folder and the path.<br /><b>Supports Expression Language: true</b> |
 
 ### Dynamic Properties:
 

@@ -8,7 +8,7 @@ trait GetFilePropertiesProperties extends CommonProperties with ErrorHandling {
 
   lazy val rootUrlProperty = rootUrlProp()
 
-  lazy val getFilePropertiesProperties = List(rootUrlProperty, sslContextServiceProperty, httpTimeoutProperty, attributesToSendProperty)
+  lazy val getFilePropertiesProperties = List(rootUrlProperty, intermediatePrefixProperty, sslContextServiceProperty, httpTimeoutProperty, attributesToSendProperty)
 
   def parseFilePath(implicit context: ProcessContext, flowFile: FlowFile) = parseRequiredAttribute("path").stripPrefix("/").stripSuffix("/")
 
