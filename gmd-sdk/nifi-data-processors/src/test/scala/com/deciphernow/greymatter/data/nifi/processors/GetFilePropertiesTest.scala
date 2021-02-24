@@ -17,15 +17,16 @@
 package com.deciphernow.greymatter.data.nifi.processors
 
 import java.io.ByteArrayInputStream
-
 import cats.effect.{ContextShift, IO, Timer}
 import com.deciphernow.greymatter.data.TestContext
 import com.deciphernow.greymatter.data.nifi.http.Metadata
 import com.deciphernow.greymatter.data.nifi.properties.GetFilePropertiesProperties
 import io.circe.generic.auto._
+import io.circe.syntax._
 import io.circe.parser._
 import org.apache.nifi.util.{TestRunner, TestRunners}
-import org.http4s.{Header, Headers}
+import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.{Header, Headers, Uri}
 import org.http4s.dsl.Http4sDsl
 import org.scalatest._
 
@@ -35,11 +36,12 @@ class GetFilePropertiesTest extends FunSpec with TestContext with Matchers with 
 
   import scala.collection.JavaConverters._
 
-  private def runProcessorTests(setup: (TestRunner, String) => List[Metadata])(runnerTests: (TestRunner, List[Metadata], String) => Unit) = {
+  private def runProcessorTests(setup: (TestRunner, String, String) => List[Metadata])(runnerTests: (TestRunner, List[Metadata], String) => Unit) = {
     val processor = new GetFileProperties
     val directory = randomString()
+    val intermediatePath = s"${randomString()}/${randomString()}/${randomString()}/"
     val runner = TestRunners.newTestRunner(processor)
-    val files = setup(runner, directory)
+    val files = setup(runner, directory, intermediatePath)
     runner.run()
     runnerTests(runner, files, directory)
   }
@@ -52,7 +54,8 @@ class GetFilePropertiesTest extends FunSpec with TestContext with Matchers with 
   val headers = Headers(List(Header("USER_DN", "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")))
 
 
-  def commonSetup(runner: TestRunner) = {
+  def commonSetup(runner: TestRunner, intermediate: Option[String]) = {
+    intermediate.map(runner.setProperty(intermediatePrefixProperty, _))
     val header: Header = headers.toList.head
     runner.setVariable(header.name.toString.toUpperCase, header.value)
     runner.setVariable("ROOT_URL", gmDataUrl)
@@ -61,9 +64,18 @@ class GetFilePropertiesTest extends FunSpec with TestContext with Matchers with 
     addSSLService(runner, sslContextServiceProperty)
   }
 
-  def happyPathTest(recurse: Boolean, action: String = "C", rootUrl: String = gmDataUrl) = runProcessorTests({ (runner, directory) =>
-    val sslContext = commonSetup(runner)
-    val files = createFilesWithSSL(sslContext, parse(policies.head).right.get, action, directory, rootUrl, 0, 1, 1, headers).unsafeRunSync()
+  def happyPathTest(recurse: Boolean, action: String = "C", rootUrl: String = gmDataUrl) = runProcessorTests({ (runner, directory, intermediate) =>
+    val sslContext = commonSetup(runner, Some(intermediate))
+
+    val files = (for{
+      client <- BlazeClientBuilder[IO](ec, Some(sslContext)).withCheckEndpointAuthentication(false).allocated.map(_._1)
+      url = Uri.unsafeFromString(rootUrl)
+      objPolicy = parse(policies.head).right.get
+      userFolderOid <- getUserFolderOid(objPolicy)(url, headers, client)
+      path = pathToList(intermediate.stripSuffix("/"))
+      intermediateOid <- createIntermediateFolders(userFolderOid, path, objPolicy)(url, headers, client)
+      file <- createRandomFilesAndMapRootUrl(intermediateOid, client, objPolicy, action, directory, rootUrl, 0, 1, 1, headers)
+    } yield file).unsafeRunSync()
     val content = new ByteArrayInputStream("".getBytes)
     files.map(metadata => Map("filename" -> metadata.name, "path" -> s"/$directory").asJava).foreach {
       runner.enqueue(content, _)
@@ -82,8 +94,8 @@ class GetFilePropertiesTest extends FunSpec with TestContext with Matchers with 
       }
     }
     it("should get an error response code and an error message if a file doesn't exist in gm data") {
-      runProcessorTests{ (runner, _) =>
-        commonSetup(runner)
+      runProcessorTests{ (runner, _, _) =>
+        commonSetup(runner, None)
         val content = new ByteArrayInputStream("".getBytes)
         runner.enqueue(content, Map("filename" -> "notrealfilename", "path" -> s"/some/bad/path").asJava)
         List()

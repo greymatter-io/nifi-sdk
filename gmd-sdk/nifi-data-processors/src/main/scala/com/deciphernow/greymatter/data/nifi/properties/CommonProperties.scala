@@ -10,7 +10,7 @@ import org.apache.nifi.flowfile.FlowFile
 import org.apache.nifi.processor.ProcessContext
 import org.apache.nifi.processor.util.StandardValidators
 import org.apache.nifi.ssl.SSLContextService
-import org.apache.nifi.ssl.SSLContextService.ClientAuth
+import org.apache.nifi.security.util.ClientAuth
 import org.http4s.{Header, Headers, Uri}
 import scala.concurrent.duration._
 
@@ -40,6 +40,10 @@ trait CommonProperties extends PropertyUtils with ErrorHandling {
 
   protected lazy val httpTimeoutProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR),"Http Timeout", "The duration. in seconds, to wait before an http connection times out.", scope = ExpressionLanguageScope.VARIABLE_REGISTRY).defaultValue("5").build()
 
+  protected lazy val intermediatePrefixProperty = buildPropertyWithValidators(List(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR),"Intermediate Folder Prefix", "When provided this path indicates intermediate folders that exist between the userfield folder and the path.", ExpressionLanguageScope.FLOWFILE_ATTRIBUTES).defaultValue("${gmdata.intermediatefolderprefix}").build()
+
+  protected def parseIntermediatePrefix(implicit context: ProcessContext, flowFile: FlowFile) = parseOptionalProperty(intermediatePrefixProperty, Some(flowFile)).map(_.stripSuffix("/"))
+
   protected def parseHttpTimeout(implicit context: ProcessContext) = parseOptionalProperty(httpTimeoutProperty, None).map(_.toInt.seconds)
 
   protected def parseSSLContext(implicit context: ProcessContext) = Option(context.getProperty(sslContextServiceProperty)).flatMap { sslCont =>
@@ -65,7 +69,7 @@ trait CommonProperties extends PropertyUtils with ErrorHandling {
     propertyDescriptor.getName -> parseProperty(propertyDescriptor, flowFile)(context)
   }
 
-  protected def parseRootUrl(rootUrlProperty: PropertyDescriptor)(implicit context: ProcessContext, flowFile: Option[FlowFile] = None) = handleErrorAndShutdown("The Remote Url property was not correctly set")(Uri.fromString(parseProperty(rootUrlProperty, flowFile)))
+  protected def parseRootUrl(rootUrlProperty: PropertyDescriptor)(implicit context: ProcessContext, flowFile: Option[FlowFile] = None) = handleErrorAndShutdown("The Remote Url property was not correctly set")(Uri.fromString(parseProperty(rootUrlProperty, flowFile).stripSuffix("/")))
 
   protected def getHeaders(attributesToSendRegex: Option[Regex])(implicit context: ProcessContext, flowFile: Option[FlowFile] = None) = Headers((parseHeaders(attributesToSendRegex).getOrElse(Map()) ++ parseDynamicProperties).map {
     case (key, value) => Header(key, value)

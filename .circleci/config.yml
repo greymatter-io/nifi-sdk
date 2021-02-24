@@ -74,7 +74,7 @@ jobs:
 
       - run:
           name: run tests
-          command: sudo chmod -R 777 gmd-sdk && cd gmd-sdk && docker ps && mvn clean test -Dtest='*,!GetPoliciesTest' -DfailIfNoTests=false
+          command: sudo chmod -R 777 gmd-sdk && cd gmd-sdk && docker ps && mvn clean test -DfailIfNoTests=false
 
       - save_cache:
           paths:

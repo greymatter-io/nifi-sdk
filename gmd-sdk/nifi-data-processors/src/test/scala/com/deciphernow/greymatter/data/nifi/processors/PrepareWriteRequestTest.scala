@@ -162,7 +162,7 @@ class PrepareWriteRequestTest extends FunSpec with TestContext with ProcessorRel
       val headers = Headers(List(Header("USER_DN", "CN=nifinpe,OU=Engineering,O=Untrusted Example,L=Baltimore,ST=MD,C=US")))
       (for {
         client <- BlazeClientBuilder[IO](ec, Some(sslContext)).withCheckEndpointAuthentication(false).allocated.map(_._1)
-        parentOid <- getUserFolderOid(parse(objectPolicyOrganizationA).right.get)(sslContext, rootUrl, headers, client)
+        parentOid <- getUserFolderOid(parse(objectPolicyOrganizationA).right.get)(rootUrl, headers, client)
         metadata = runProcessorTests(attributeMap(_, _), parentOid = parentOid) { (runner, expectedMetadata, _) =>
           for (flowFile: MockFlowFile <- runner.getFlowFilesForRelationship(RelSuccess).asScala) {
             val bytes = runner.getContentAsByteArray(flowFile)
