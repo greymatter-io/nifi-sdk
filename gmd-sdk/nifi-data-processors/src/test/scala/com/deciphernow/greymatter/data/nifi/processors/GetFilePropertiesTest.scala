@@ -77,7 +77,7 @@ class GetFilePropertiesTest extends FunSpec with TestContext with Matchers with 
       file <- createRandomFilesAndMapRootUrl(intermediateOid, client, objPolicy, action, directory, rootUrl, 0, 1, 1, headers)
     } yield file).unsafeRunSync()
     val content = new ByteArrayInputStream("".getBytes)
-    files.map(metadata => Map("filename" -> metadata.name, "path" -> s"/$directory").asJava).foreach {
+    files.map(metadata => Map("filename" -> metadata.name, "path" -> s"./$directory").asJava).foreach {
       runner.enqueue(content, _)
     }
     files

@@ -33,7 +33,7 @@ trait GetFilePropertiesUtils extends GmDataClient[IO] with GetFilePropertiesProp
     configEither <- getConfig(rootUrl, client, headers).attempt map handleErrorAndContinue("There was an error hitting the /config endpoint of GM Data")
     userFolderEither <- configEither flatTraverse validUserFolderName(headers, client, rootUrl)
     propertiesEither <- userFolderEither.flatTraverse { userFolder =>
-      val path = intermediatePrefix.map(intermediate => s"$userFolder/$intermediate/$filePath/$fileName").getOrElse(s"$userFolder/$filePath/$fileName")
+      val path = Uri.removeDotSegments(intermediatePrefix.map(intermediate => s"$userFolder/$intermediate/$filePath/$fileName").getOrElse(s"$userFolder/$filePath/$fileName"))
       getPropsAndStatus(path, headers, rootUrl, client).attempt
     }
   } yield propertiesEither
