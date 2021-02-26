@@ -38,8 +38,8 @@ class GetFilePropertiesTest extends FunSpec with TestContext with Matchers with 
 
   private def runProcessorTests(setup: (TestRunner, String, String) => List[Metadata])(runnerTests: (TestRunner, List[Metadata], String) => Unit) = {
     val processor = new GetFileProperties
-    val directory = randomString()
-    val intermediatePath = s"${randomString()}/${randomString()}/${randomString()}/"
+    val directory = randomString() + " a directory with spaces"
+    val intermediatePath = s"${randomString()}/       intermediate weird spaces/${randomString()}/"
     val runner = TestRunners.newTestRunner(processor)
     val files = setup(runner, directory, intermediatePath)
     runner.run()
