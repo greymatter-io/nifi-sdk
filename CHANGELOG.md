@@ -6,6 +6,7 @@
   - Add optional property `Intermediate Folder Prefix` to GetFileProperties
   - Add support for beginning or ending slashes in URL paths in processors
   - Add support for removing dot segments from paths in GetFileProperties
+  - Add support for spaces in paths in GetFileProperties
 - Release 1.0.5  
 
 ## January

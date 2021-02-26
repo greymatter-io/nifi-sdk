@@ -22,6 +22,11 @@ trait GetFilePropertiesUtils extends GmDataClient[IO] with GetFilePropertiesProp
 
   def validUserFolderName(headers: Headers, client: Client[IO], rootUrl: Uri)(config: Config) = getUserFolder(rootUrl, headers, config, client).map(_.map(config.GMDATA_NAMESPACE_OID + "/" + _))
 
+  def validatePath(prefix: Option[String], filePath: String, fileName: String)(userFolder: String) = {
+      val path = Uri.removeDotSegments(prefix.map(intermediate => s"$userFolder/$intermediate/$filePath/$fileName").getOrElse(s"$userFolder/$filePath/$fileName"))
+      Uri.pathEncode(path)
+  }
+
   def getPropertiesAndStatusFromConfiguredPath(implicit context: ProcessContext, session: ProcessSession, flowFile: FlowFile, logger: ComponentLog, clientRef: Ref[IO, Client[IO]], cs: ContextShift[IO]) = for {
     attributesToSendRegex <- IO.delay(parseAttributesToSend(context, Some(flowFile)).map(_.r))
     headers <- IO.delay(getHeaders(attributesToSendRegex)(context, Some(flowFile)))
@@ -32,10 +37,8 @@ trait GetFilePropertiesUtils extends GmDataClient[IO] with GetFilePropertiesProp
     client <- clientRef.get
     configEither <- getConfig(rootUrl, client, headers).attempt map handleErrorAndContinue("There was an error hitting the /config endpoint of GM Data")
     userFolderEither <- configEither flatTraverse validUserFolderName(headers, client, rootUrl)
-    propertiesEither <- userFolderEither.flatTraverse { userFolder =>
-      val path = Uri.removeDotSegments(intermediatePrefix.map(intermediate => s"$userFolder/$intermediate/$filePath/$fileName").getOrElse(s"$userFolder/$filePath/$fileName"))
-      getPropsAndStatus(path, headers, rootUrl, client).attempt
-    }
+    pathEither = userFolderEither map validatePath(intermediatePrefix, filePath, fileName)
+    propertiesEither <- pathEither.flatTraverse(getPropsAndStatus(_, headers, rootUrl, client).attempt)
   } yield propertiesEither
 
   def getFileProps(implicit context: ProcessContext, session: ProcessSession, flowFile: FlowFile, logger: ComponentLog, clientRef: Ref[IO, Client[IO]], cs: ContextShift[IO]) = for {
