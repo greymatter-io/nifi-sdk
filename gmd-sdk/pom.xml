@@ -47,12 +47,12 @@
 	</modules>
 	<distributionManagement>
 		<repository>
-			<id>oss-release</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<id>nexus-release</id>
+			<url>https://nexus.greymatter.io/repository/maven-release/</url>
 		</repository>
 		<snapshotRepository>
-			<id>oss-snapshot</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<id>nexus-snapshots</id>
+			<url>https://nexus.greymatter.io/repository/maven-snapshot/</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<dependencies>
@@ -65,28 +65,6 @@
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>com.deciphernow</groupId>
-				<artifactId>bouncycastle-maven-plugin</artifactId>
-				<version>1.1.1</version>
-				<configuration>
-					<!--suppress UnresolvedMavenProperty -->
-					<passphrase>${env.PGP_PASSPHRASE}</passphrase>
-					<!--suppress UnresolvedMavenProperty -->
-					<rings>${env.PGP_RINGS}</rings>
-					<!--suppress UnresolvedMavenProperty -->
-					<userId>${env.PGP_USER_ID}</userId>
-				</configuration>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
@@ -123,21 +101,6 @@
 						<arg>-Ypartial-unification</arg>
 					</args>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.8</version>
-				<extensions>false</extensions>
-				<executions>
-					<execution>
-						<id>default-deploy</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
